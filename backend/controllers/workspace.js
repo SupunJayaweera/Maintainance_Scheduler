@@ -33,7 +33,7 @@ const getWorkspaces = async (req, res) => {
   }
 };
 
-const getWorkspaceById = async (req, res) => {
+const getWorkspaceDetails = async (req, res) => {
   try {
     const { workspaceId } = req.params;
     const workspace = await Workspace.findOne({
@@ -520,7 +520,7 @@ const acceptInviteByToken = async (req, res) => {
 export {
   createWorkspace,
   getWorkspaces,
-  getWorkspaceById,
+  getWorkspaceDetails,
   getWorkspaceProjects,
   getWorkspaceStats,
   inviteUserToWorkspace,

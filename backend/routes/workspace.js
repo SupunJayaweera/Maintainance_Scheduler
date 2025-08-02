@@ -4,7 +4,7 @@ import { validateRequest } from "zod-express-middleware";
 import { authMiddleware } from "../middleware/auth-middleware.js";
 import {
   createWorkspace,
-  getWorkspaceById,
+  getWorkspaceDetails,
   getWorkspaceProjects,
   getWorkspaces,
   getWorkspaceStats,
@@ -22,7 +22,7 @@ router.post(
 
 router.get("/", authMiddleware, getWorkspaces);
 
-router.get("/:workspaceId", authMiddleware, getWorkspaceById);
+router.get("/:workspaceId", authMiddleware, getWorkspaceDetails);
 
 router.get("/:workspaceId/projects", authMiddleware, getWorkspaceProjects);
 
