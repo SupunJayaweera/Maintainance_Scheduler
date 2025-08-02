@@ -13,11 +13,12 @@ import { Navigate, Outlet } from "react-router";
 export const clientLoader = async () => {
   try {
     const [workspaces] = await Promise.all([fetchData("/workspaces")]);
-    return { workspaces };
+    return { workspaces: workspaces || [] };
   } catch (error) {
     console.log(error);
+    // Return empty workspaces array even if there's an error
+    return { workspaces: [] };
   }
-  return {};
 };
 
 const DashboardLayout = () => {

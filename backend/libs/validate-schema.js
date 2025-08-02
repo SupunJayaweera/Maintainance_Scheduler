@@ -27,6 +27,11 @@ const emailSchema = z.object({
   email: z.string().email("Invalid email format"),
 });
 
+const inviteMemberSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  role: z.enum(["admin", "member", "viewer"]),
+});
+
 const workspaceSchema = z.object({
   name: z.string().min(1, "Workspace name is required"),
   description: z.string().optional(),
@@ -65,6 +70,10 @@ const taskSchema = z.object({
   assignees: z.array(z.string()).min(1, "At least one assignee is required"),
 });
 
+const tokenSchema = z.object({
+  token: z.string().min(1, "Token is required"),
+});
+
 export {
   registerSchema,
   loginSchema,
@@ -74,4 +83,6 @@ export {
   workspaceSchema,
   projectSchema,
   taskSchema,
+  inviteMemberSchema,
+  tokenSchema,
 };

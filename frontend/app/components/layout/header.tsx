@@ -27,7 +27,8 @@ export const Header = ({
   oncreateWorkspace,
 }: HeaderProps) => {
   const { user, logout } = useAuth();
-  const { workspaces } = useLoaderData() as { workspaces: Workspace[] };
+  const loaderData = useLoaderData() as { workspaces?: Workspace[] };
+  const workspaces = loaderData?.workspaces || [];
   const isOnWorkSpacePage = useLocation().pathname.includes("/workspace");
   // console.log("workspaces", workspaces);
   const navigate = useNavigate();
@@ -71,17 +72,25 @@ export const Header = ({
             <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
-              {workspaces.map((ws) => (
-                <DropdownMenuItem
-                  key={ws._id}
-                  onClick={() => handleOnClick(ws)}
-                >
-                  {ws.color && (
-                    <WorkspaceAvatar color={ws.color} name={ws.name} />
-                  )}
-                  <span className="ml-2">{ws.name}</span>
+              {workspaces.length > 0 ? (
+                workspaces.map((ws) => (
+                  <DropdownMenuItem
+                    key={ws._id}
+                    onClick={() => handleOnClick(ws)}
+                  >
+                    {ws.color && (
+                      <WorkspaceAvatar color={ws.color} name={ws.name} />
+                    )}
+                    <span className="ml-2">{ws.name}</span>
+                  </DropdownMenuItem>
+                ))
+              ) : (
+                <DropdownMenuItem disabled>
+                  <span className="text-muted-foreground">
+                    No workspaces found
+                  </span>
                 </DropdownMenuItem>
-              ))}
+              )}
             </DropdownMenuGroup>
 
             <DropdownMenuGroup>

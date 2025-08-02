@@ -1,5 +1,6 @@
 import { Loader } from "@/components/loader";
 import CreateProjectDialog from "@/components/project/create-project";
+import { InviteMemberDialog } from "@/components/workspace/invite-members";
 import { ProjectList } from "@/components/workspace/project-list";
 
 import { WorkspaceHeader } from "@/components/workspace/workspace-header";
@@ -72,11 +73,11 @@ const WorkspaceDetails = () => {
         workspaceMembers={data.workspace.members as any}
       />
 
-      {/* <InviteMemberDialog
+      <InviteMemberDialog
         isOpen={isInviteMember}
         onOpenChange={setIsInviteMember}
         workspaceId={workspaceId}
-      /> */}
+      />
     </div>
   );
 };
