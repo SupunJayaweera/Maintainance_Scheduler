@@ -4,6 +4,7 @@ import Comment from "../models/comment.js";
 import Project from "../models/project.js";
 import Task from "../models/task.js";
 import Workspace from "../models/workspace.js";
+import { writeTaskStatus } from "./influx-controller.js";
 
 const createTask = async (req, res) => {
   try {
@@ -231,6 +232,11 @@ const updateTaskStatus = async (req, res) => {
     await recordActivity(req.user._id, "updated_task", "Task", taskId, {
       description: `updated task status from ${oldStatus} to ${status}`,
     });
+
+    // Write task status to InfluxDB
+    if (project) {
+      await writeTaskStatus(project.workspace.toString(), taskId, status);
+    }
 
     res.status(200).json(task);
   } catch (error) {

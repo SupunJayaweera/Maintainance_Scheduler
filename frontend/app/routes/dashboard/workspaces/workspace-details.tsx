@@ -2,6 +2,7 @@ import { Loader } from "@/components/loader";
 import CreateProjectDialog from "@/components/project/create-project";
 import { InviteMemberDialog } from "@/components/workspace/invite-members";
 import { ProjectList } from "@/components/workspace/project-list";
+import InfluxDashboard from "./influx-dashboard";
 
 import { WorkspaceHeader } from "@/components/workspace/workspace-header";
 import { useGetWorkspaceQuery } from "@/hooks/use-workspace";
@@ -65,6 +66,8 @@ const WorkspaceDetails = () => {
         projects={data.projects || []}
         onCreateProject={() => setIsCreateProject(true)}
       />
+
+      <InfluxDashboard />
 
       <CreateProjectDialog
         isOpen={isCreateProject}
