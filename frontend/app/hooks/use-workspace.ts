@@ -1,5 +1,5 @@
 import type { WorkspaceForm } from "@/components/workspace/create-workspace";
-import { fetchData, postData } from "@/lib/fetch-utils";
+import { fetchData, postData, updateData } from "@/lib/fetch-utils";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const useCreateWorkspace = () => {
@@ -57,5 +57,19 @@ export const useAcceptGenerateInviteMutation = () => {
   return useMutation({
     mutationFn: (workspaceId: string) =>
       postData(`/workspaces/${workspaceId}/accept-generate-invite`, {}),
+  });
+};
+
+export const useArchiveWorkspaceMutation = () => {
+  return useMutation({
+    mutationFn: (workspaceId: string) =>
+      updateData(`/workspaces/${workspaceId}/archive`, {}),
+  });
+};
+
+export const useGetArchivedWorkspacesQuery = () => {
+  return useQuery({
+    queryKey: ["workspaces", "archived"],
+    queryFn: async () => fetchData("/workspaces/archived"),
   });
 };

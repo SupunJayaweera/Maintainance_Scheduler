@@ -4,16 +4,25 @@ import { InviteMemberDialog } from "@/components/workspace/invite-members";
 import { ProjectList } from "@/components/workspace/project-list";
 
 import { WorkspaceHeader } from "@/components/workspace/workspace-header";
-import { useGetWorkspaceQuery } from "@/hooks/use-workspace";
+import {
+  useGetWorkspaceQuery,
+  useArchiveWorkspaceMutation,
+} from "@/hooks/use-workspace";
 
 import type { Project, Workspace } from "@/types";
 import { useState } from "react";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const WorkspaceDetails = () => {
   const { workspaceId } = useParams<{ workspaceId: string }>();
   const [isCreateProject, setIsCreateProject] = useState(false);
   const [isInviteMember, setIsInviteMember] = useState(false);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const archiveWorkspaceMutation = useArchiveWorkspaceMutation();
 
   if (!workspaceId) {
     return <div>No workspace found</div>;
@@ -51,6 +60,30 @@ const WorkspaceDetails = () => {
 
   console.log("check", data);
 
+  const handleArchiveWorkspace = async () => {
+    if (!workspaceId) return;
+
+    try {
+      await archiveWorkspaceMutation.mutateAsync(workspaceId);
+
+      // Invalidate and refetch workspace data
+      queryClient.invalidateQueries({ queryKey: ["workspace", workspaceId] });
+      queryClient.invalidateQueries({ queryKey: ["workspaces"] });
+
+      toast.success(
+        data.workspace.isArchived
+          ? "Workspace unarchived successfully"
+          : "Workspace archived successfully"
+      );
+
+      // Navigate back to workspaces list
+      navigate("/workspaces");
+    } catch (error) {
+      console.error("Archive error:", error);
+      toast.error("Failed to archive/unarchive workspace");
+    }
+  };
+
   return (
     <div className="space-y-8">
       <WorkspaceHeader
@@ -58,6 +91,7 @@ const WorkspaceDetails = () => {
         members={data.workspace?.members}
         onCreateProject={() => setIsCreateProject(true)}
         onInviteMember={() => setIsInviteMember(true)}
+        onArchiveWorkspace={handleArchiveWorkspace}
       />
 
       <ProjectList

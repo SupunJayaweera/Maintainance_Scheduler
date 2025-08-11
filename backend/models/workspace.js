@@ -32,6 +32,8 @@ const workspaceSchema = new mongoose.Schema(
         ref: "Project",
       },
     ],
+
+    isArchived: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

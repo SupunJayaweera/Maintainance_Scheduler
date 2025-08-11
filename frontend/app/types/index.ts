@@ -21,6 +21,7 @@ export interface Workspace {
   }[];
   createdAt: Date;
   updatedAt: Date;
+  isArchived?: boolean;
 }
 export enum ProjectStatus {
   PLANNING = "Planning",
@@ -42,7 +43,7 @@ export interface Project {
   tasks: Task[];
   members: {
     user: User;
-    role: "admin" | "member" | "owner" | "viewer";
+    role: "manager" | "contributor" | "viewer";
   }[];
   createdAt: Date;
   updatedAt: Date;
@@ -68,6 +69,13 @@ export interface MemberProps {
   user: User;
   role: "admin" | "member" | "owner" | "viewer";
   joinedAt: Date;
+}
+
+export interface ProjectMemberProps {
+  _id: string;
+  user: User;
+  role: "manager" | "contributor" | "viewer";
+  joinedAt?: Date;
 }
 
 export interface Task {

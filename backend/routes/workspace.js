@@ -9,7 +9,9 @@ import { authMiddleware } from "../middleware/auth-middleware.js";
 import {
   acceptGenerateInvite,
   acceptInviteByToken,
+  archiveWorkspace,
   createWorkspace,
+  getArchivedWorkspaces,
   getWorkspaceDetails,
   getWorkspaceProjects,
   getWorkspaces,
@@ -28,6 +30,8 @@ router.post(
 );
 
 router.get("/", authMiddleware, getWorkspaces);
+
+router.get("/archived", authMiddleware, getArchivedWorkspaces);
 
 router.post(
   "/accept-invite-token",
@@ -53,6 +57,15 @@ router.post(
     params: z.object({ workspaceId: z.string() }),
   }),
   acceptGenerateInvite
+);
+
+router.put(
+  "/:workspaceId/archive",
+  authMiddleware,
+  validateRequest({
+    params: z.object({ workspaceId: z.string() }),
+  }),
+  archiveWorkspace
 );
 
 router.get("/:workspaceId", authMiddleware, getWorkspaceDetails);

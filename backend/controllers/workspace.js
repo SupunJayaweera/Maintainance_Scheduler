@@ -27,6 +27,10 @@ const getWorkspaces = async (req, res) => {
   try {
     const workspaces = await Workspace.find({
       "members.user": req.user._id,
+      $or: [
+        { isArchived: { $ne: true } }, // Not archived
+        { isArchived: { $exists: false } }, // Field doesn't exist (legacy workspaces)
+      ],
     }).sort({ createdAt: -1 });
 
     // Return empty array if no workspaces found (normal for new users)
@@ -525,6 +529,73 @@ const acceptInviteByToken = async (req, res) => {
   }
 };
 
+const archiveWorkspace = async (req, res) => {
+  try {
+    const { workspaceId } = req.params;
+
+    const workspace = await Workspace.findById(workspaceId);
+
+    if (!workspace) {
+      return res.status(404).json({
+        message: "Workspace not found",
+      });
+    }
+
+    // Check if user is owner or admin
+    const userMember = workspace.members.find(
+      (member) => member.user.toString() === req.user._id.toString()
+    );
+
+    if (!userMember || !["owner", "admin"].includes(userMember.role)) {
+      return res.status(403).json({
+        message: "You don't have permission to archive this workspace",
+      });
+    }
+
+    workspace.isArchived = !workspace.isArchived;
+    await workspace.save();
+
+    // Record activity
+    await recordActivity(
+      req.user._id,
+      workspace.isArchived ? "archived_workspace" : "unarchived_workspace",
+      "Workspace",
+      workspaceId,
+      {
+        description: `${
+          workspace.isArchived ? "Archived" : "Unarchived"
+        } workspace ${workspace.name}`,
+      }
+    );
+
+    res.status(200).json({
+      message: `Workspace ${
+        workspace.isArchived ? "archived" : "unarchived"
+      } successfully`,
+      workspace,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+const getArchivedWorkspaces = async (req, res) => {
+  try {
+    const archivedWorkspaces = await Workspace.find({
+      "members.user": req.user._id,
+      isArchived: true,
+    }).sort({ updatedAt: -1 });
+
+    res.status(200).json(archivedWorkspaces);
+  } catch (error) {
+    console.log("Error fetching archived workspaces:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 export {
   createWorkspace,
   getWorkspaces,
@@ -534,4 +605,6 @@ export {
   inviteUserToWorkspace,
   acceptGenerateInvite,
   acceptInviteByToken,
+  archiveWorkspace,
+  getArchivedWorkspaces,
 };

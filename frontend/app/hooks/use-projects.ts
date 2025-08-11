@@ -1,5 +1,5 @@
 import type { CreateProjectFormData } from "@/components/project/create-project";
-import { fetchData, postData } from "@/lib/fetch-utils";
+import { fetchData, postData, updateData } from "@/lib/fetch-utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const UseCreateProject = () => {
@@ -25,5 +25,19 @@ export const UseProjectQuery = (projectId: string) => {
   return useQuery({
     queryKey: ["project", projectId],
     queryFn: () => fetchData(`/projects/${projectId}/tasks`),
+  });
+};
+
+export const useArchiveProjectMutation = () => {
+  return useMutation({
+    mutationFn: (projectId: string) =>
+      updateData(`/projects/${projectId}/archive`, {}),
+  });
+};
+
+export const useGetArchivedProjectsQuery = () => {
+  return useQuery({
+    queryKey: ["projects", "archived"],
+    queryFn: async () => fetchData("/projects/archived"),
   });
 };

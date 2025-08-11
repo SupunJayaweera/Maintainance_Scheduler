@@ -7,15 +7,27 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UseProjectQuery } from "@/hooks/use-projects";
+import {
+  UseProjectQuery,
+  useArchiveProjectMutation,
+} from "@/hooks/use-projects";
 
 import { getProjectProgress } from "@/lib";
 import { cn } from "@/lib/utils";
 import type { Project, Task, TaskStatus } from "@/types";
 import { format } from "date-fns";
-import { AlertCircle, Calendar, CheckCircle, Clock } from "lucide-react";
+import {
+  AlertCircle,
+  Archive,
+  Calendar,
+  CheckCircle,
+  Clock,
+} from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { useAuth } from "@/provider/auth-context";
 
 const ProjectDetails = () => {
   const { projectId, workspaceId } = useParams<{
@@ -23,6 +35,9 @@ const ProjectDetails = () => {
     workspaceId: string;
   }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const archiveProjectMutation = useArchiveProjectMutation();
 
   const [isCreateTask, setIsCreateTask] = useState(false);
   const [taskFilter, setTaskFilter] = useState<TaskStatus | "All">("All");
@@ -51,6 +66,57 @@ const ProjectDetails = () => {
     );
   };
 
+  const handleArchiveProject = async () => {
+    if (!projectId) return;
+
+    try {
+      await archiveProjectMutation.mutateAsync(projectId);
+
+      // Invalidate and refetch project data
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["workspace", workspaceId] });
+      queryClient.invalidateQueries({ queryKey: ["projects", "archived"] });
+
+      toast.success(
+        project.isArchived
+          ? "Project unarchived successfully"
+          : "Project archived successfully"
+      );
+
+      // Navigate back to workspace
+      navigate(`/workspaces/${workspaceId}`);
+    } catch (error) {
+      console.error("Archive error:", error);
+      toast.error("Failed to archive/unarchive project");
+    }
+  };
+
+  // Check if current user can archive the project
+  const currentUserMember = project.members?.find((member) => {
+    const memberId =
+      typeof member.user === "string" ? member.user : member.user._id;
+    return memberId === user?._id;
+  });
+
+  // Check workspace permissions
+  const workspaceMember = project.workspace?.members?.find((member) => {
+    const memberId =
+      typeof member.user === "string" ? member.user : member.user._id;
+    return memberId === user?._id;
+  });
+
+  const canArchive =
+    currentUserMember?.role === "manager" ||
+    workspaceMember?.role === "owner" ||
+    workspaceMember?.role === "admin";
+
+  console.log(project.isArchived, canArchive);
+
+  console.log(
+    currentUserMember?.role,
+    workspaceMember?.role,
+    workspaceMember?.role
+  );
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -58,6 +124,12 @@ const ProjectDetails = () => {
           <BackButton />
           <div className="flex items-center gap-3">
             <h1 className="text-xl md:text-2xl font-bold">{project.title}</h1>
+            {project.isArchived && (
+              <Badge variant="outline" className="text-xs">
+                <Archive className="h-3 w-3 mr-1" />
+                Archived
+              </Badge>
+            )}
           </div>
           {project.description && (
             <p className="text-sm text-gray-500">{project.description}</p>
@@ -75,7 +147,22 @@ const ProjectDetails = () => {
             </span>
           </div>
 
-          <Button onClick={() => setIsCreateTask(true)}>Add Task</Button>
+          <div className="flex gap-2">
+            {canArchive && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleArchiveProject}
+                title={
+                  project.isArchived ? "Unarchive Project" : "Archive Project"
+                }
+              >
+                <Archive className="size-4 mr-2" />
+                {project.isArchived ? "Unarchive" : "Archive"}
+              </Button>
+            )}
+            <Button onClick={() => setIsCreateTask(true)}>Add Task</Button>
+          </div>
         </div>
       </div>
 

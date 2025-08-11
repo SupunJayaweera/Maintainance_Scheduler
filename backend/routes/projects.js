@@ -6,10 +6,14 @@ import {
   createProject,
   getProjectDetails,
   getProjectTasks,
+  archiveProject,
+  getArchivedProjects,
 } from "../controllers/project.js";
 import { z } from "zod";
 
 const router = express.Router();
+
+router.get("/archived", authMiddleware, getArchivedProjects);
 
 router.post(
   "/:workspaceId/create-project",
@@ -35,6 +39,15 @@ router.get(
   authMiddleware,
   validateRequest({ params: z.object({ projectId: z.string() }) }),
   getProjectTasks
+);
+
+router.put(
+  "/:projectId/archive",
+  authMiddleware,
+  validateRequest({
+    params: z.object({ projectId: z.string() }),
+  }),
+  archiveProject
 );
 
 export default router;

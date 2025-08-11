@@ -7,11 +7,12 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import { Badge } from "../ui/badge";
 import { cn } from "@/lib/utils";
 import { getTaskStatusColor } from "@/lib";
 import { Progress } from "../ui/progress";
 import { format } from "date-fns";
-import { CalendarDays } from "lucide-react";
+import { Archive, CalendarDays } from "lucide-react";
 
 interface ProjectCardProps {
   project: Project;
@@ -28,20 +29,28 @@ export const ProjectCard = ({
     <Link to={`/workspaces/${workspaceId}/projects/${project._id}`}>
       <Card className="transition-all hover:translate-y-1 duration-300 hover:shadow-md">
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>{project.title}</CardTitle>
+          <div className="flex items-center justify-between mb-2">
+            <CardTitle className="flex items-center gap-2">
+              {project.title}
+              {project.isArchived && (
+                <Badge variant="outline" className="text-xs">
+                  <Archive className="h-3 w-3 mr-1" />
+                  Archived
+                </Badge>
+              )}
+            </CardTitle>
             <span
               className={cn(
-                "text-xs rounded-full",
+                "px-2 py-1 text-xs rounded-full",
                 getTaskStatusColor(project.status)
               )}
             >
               {project.status}
             </span>
-            <CardDescription className="line-clamp-2">
-              {project.description || "No description provided."}
-            </CardDescription>
           </div>
+          <CardDescription className="line-clamp-2">
+            {project.description || "No description provided."}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">

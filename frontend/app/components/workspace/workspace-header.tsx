@@ -1,8 +1,9 @@
 import type { User, Workspace } from "@/types";
 import { WorkspaceAvatar } from "./workspace-avatar";
 import { Button } from "../ui/button";
-import { Plus, UserPlus } from "lucide-react";
+import { Archive, Plus, UserPlus } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useAuth } from "@/provider/auth-context";
 
 interface WorkspaceHeaderProps {
   workspace?: Workspace;
@@ -13,6 +14,7 @@ interface WorkspaceHeaderProps {
   }[];
   onCreateProject: () => void;
   onInviteMember: () => void;
+  onArchiveWorkspace?: () => void;
 }
 
 export const WorkspaceHeader = ({
@@ -20,7 +22,10 @@ export const WorkspaceHeader = ({
   members,
   onCreateProject,
   onInviteMember,
+  onArchiveWorkspace,
 }: WorkspaceHeaderProps) => {
+  const { user } = useAuth();
+
   // Add debugging
   // console.log("WorkspaceHeader received:", { workspace, members });
 
@@ -28,6 +33,13 @@ export const WorkspaceHeader = ({
   if (!workspace) {
     return <div>Loading workspace...</div>;
   }
+
+  // Check if current user is owner or admin
+  const currentUserMember = members?.find(
+    (member) => member.user._id === user?._id
+  );
+  const canArchive =
+    currentUserMember?.role === "owner" || currentUserMember?.role === "admin";
 
   return (
     <div className="space-y-8">
@@ -52,6 +64,21 @@ export const WorkspaceHeader = ({
               <Plus className="size-4 mr-2" />
               Create a Job
             </Button>
+            {canArchive && onArchiveWorkspace && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={onArchiveWorkspace}
+                title={
+                  workspace.isArchived
+                    ? "Unarchive Workspace"
+                    : "Archive Workspace"
+                }
+              >
+                <Archive className="size-4 mr-2" />
+                {workspace.isArchived ? "Unarchive" : "Archive"}
+              </Button>
+            )}
           </div>
         </div>
 
