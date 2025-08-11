@@ -32,7 +32,7 @@ const Workspace = () => {
     <>
       <div className="space-y-8">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl md:text-3xl font-bold">Workspaces</h2>
+          <h2 className="text-xl md:text-3xl font-bold">Machine Workspaces</h2>
           <Button onClick={() => setIsCreatingWorkspace(true)}>
             <PlusCircle className="mr-2 h-4 w-4" />
             New Workspace
@@ -87,7 +87,7 @@ const WorkspaceCard = ({ workspace }: { workspace: Workspace }) => {
         </CardHeader>
         <CardContent>
           <div className="text-sm text-muted-foreground">
-            View Work Space Details and Projects
+            View Work Space Details and Jobs
           </div>
         </CardContent>
       </Card>

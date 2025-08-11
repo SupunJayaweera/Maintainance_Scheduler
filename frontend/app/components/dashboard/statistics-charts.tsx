@@ -120,9 +120,7 @@ export const StatisticsCharts = ({
       <Card>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <div className="space-y-0.5">
-            <CardTitle className="text-base font-medium">
-              Project Status
-            </CardTitle>
+            <CardTitle className="text-base font-medium">Job Status</CardTitle>
             <CardDescription>Project status breakdown</CardDescription>
           </div>
 

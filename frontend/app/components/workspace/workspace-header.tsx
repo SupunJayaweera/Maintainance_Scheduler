@@ -50,7 +50,7 @@ export const WorkspaceHeader = ({
             </Button>
             <Button onClick={onCreateProject}>
               <Plus className="size-4 mr-2" />
-              Create Project
+              Create a Job
             </Button>
           </div>
         </div>

@@ -71,6 +71,7 @@ const MyTasks = () => {
   const filteredTasks =
     myTasks?.length > 0
       ? myTasks
+          .filter((task) => task.project !== null) // Filter out tasks with null projects
           .filter((task) => {
             if (filter === "all") return true;
             if (filter === "todo") return task.status === "To Do";
@@ -280,33 +281,61 @@ const MyTasks = () => {
                     key={task._id}
                     className="hover:shadow-md transition-shadow"
                   >
-                    <Link
-                      to={`/workspaces/${task.project.workspace}/projects/${task.project._id}/tasks/${task._id}`}
-                      className="block"
-                    >
-                      <h3 className="font-medium">{task.title}</h3>
-                      <p className="text-sm text-muted-foreground line-clamp-3">
-                        {task.description || "No description "}
-                      </p>
+                    {task.project ? (
+                      <Link
+                        to={`/workspaces/${task.project.workspace}/projects/${task.project._id}/tasks/${task._id}`}
+                        className="block"
+                      >
+                        <h3 className="font-medium">{task.title}</h3>
+                        <p className="text-sm text-muted-foreground line-clamp-3">
+                          {task.description || "No description "}
+                        </p>
 
-                      <div className="flex items-center mt-2 gap-2">
-                        <Badge
-                          variant={
-                            task.priority === "High"
-                              ? "destructive"
-                              : "secondary"
-                          }
-                        >
-                          {task.priority}
-                        </Badge>
+                        <div className="flex items-center mt-2 gap-2">
+                          <Badge
+                            variant={
+                              task.priority === "High"
+                                ? "destructive"
+                                : "secondary"
+                            }
+                          >
+                            {task.priority}
+                          </Badge>
 
-                        {task.dueDate && (
-                          <span className="text-sm text-muted-foreground">
-                            {format(task.dueDate, "PPPP")}
-                          </span>
-                        )}
+                          {task.dueDate && (
+                            <span className="text-sm text-muted-foreground">
+                              {format(task.dueDate, "PPPP")}
+                            </span>
+                          )}
+                        </div>
+                      </Link>
+                    ) : (
+                      <div className="block p-3">
+                        <h3 className="font-medium">{task.title}</h3>
+                        <p className="text-sm text-muted-foreground line-clamp-3">
+                          {task.description || "No description "}
+                        </p>
+                        <div className="flex items-center mt-2 gap-2">
+                          <Badge
+                            variant={
+                              task.priority === "High"
+                                ? "destructive"
+                                : "secondary"
+                            }
+                          >
+                            {task.priority}
+                          </Badge>
+                          {task.dueDate && (
+                            <span className="text-sm text-muted-foreground">
+                              {format(task.dueDate, "PPPP")}
+                            </span>
+                          )}
+                          <Badge variant="destructive" className="ml-auto">
+                            Project Missing
+                          </Badge>
+                        </div>
                       </div>
-                    </Link>
+                    )}
                   </Card>
                 ))}
 

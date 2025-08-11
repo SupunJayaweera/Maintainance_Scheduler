@@ -98,7 +98,7 @@ const CreateProjectDialog = ({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[540px]">
         <DialogHeader>
-          <DialogTitle>Create Project</DialogTitle>
+          <DialogTitle>Create a Job</DialogTitle>
           <DialogDescription>
             Create a new project to get started
           </DialogDescription>
