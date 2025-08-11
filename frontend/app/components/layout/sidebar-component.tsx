@@ -35,7 +35,7 @@ const SidebarComponent = ({
     { title: "My Tasks", href: "/my-tasks", icon: ListCheck },
     { title: "Members", href: "/members", icon: Users },
     { title: "Archived", href: "/archived", icon: CheckCircle2 },
-    { title: "Settings", href: "/settings", icon: Settings },
+    // { title: "Settings", href: "/settings", icon: Settings },
   ];
 
   return (
@@ -50,7 +50,7 @@ const SidebarComponent = ({
           {!isCollapsed && (
             <div className="flex items-center gap-2">
               <Wrench className="size-6 text-blue-600" />
-              <span className="font-semibold text-lg hidden md:block">
+              <span className="font-semibold p-3 text-lg hidden md:block">
                 Maintenance Scheduler
               </span>
             </div>
