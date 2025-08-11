@@ -178,9 +178,11 @@ export interface StatsCardProps {
 
 export interface TaskTrendsData {
   name: string;
+  period?: string;
   completed: number;
   inProgress: number;
-  todo: number;
+  toDo: number;
+  review?: number;
 }
 
 export interface TaskPriorityData {

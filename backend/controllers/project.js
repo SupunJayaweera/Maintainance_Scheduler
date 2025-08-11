@@ -209,10 +209,88 @@ const getArchivedProjects = async (req, res) => {
   }
 };
 
+const updateProjectStatus = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { status } = req.body;
+
+    // Validate status
+    const validStatuses = [
+      "Planning",
+      "In Progress",
+      "On Hold",
+      "Completed",
+      "Cancelled",
+    ];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
+
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    // Check if user is a member of the project
+    const userMember = project.members.find(
+      (member) => member.user.toString() === req.user._id.toString()
+    );
+
+    if (!userMember) {
+      return res.status(403).json({
+        message: "You are not a member of this project",
+      });
+    }
+
+    // Only project managers or workspace owners/admins can change project status
+    const workspace = await Workspace.findById(project.workspace);
+    const workspaceMember = workspace.members.find(
+      (member) => member.user.toString() === req.user._id.toString()
+    );
+
+    const canUpdateStatus =
+      userMember.role === "manager" ||
+      workspaceMember?.role === "owner" ||
+      workspaceMember?.role === "admin";
+
+    if (!canUpdateStatus) {
+      return res.status(403).json({
+        message: "You don't have permission to update this project status",
+      });
+    }
+
+    // Update project status
+    project.status = status;
+    await project.save();
+
+    // Log activity (optional - you can add this if you have activity logging)
+    // await recordActivity({
+    //   user: req.user._id,
+    //   action: "project_status_updated",
+    //   target: "Project",
+    //   targetId: project._id,
+    //   details: { oldStatus: project.status, newStatus: status },
+    // });
+
+    res.status(200).json({
+      message: "Project status updated successfully",
+      project: {
+        _id: project._id,
+        status: project.status,
+      },
+    });
+  } catch (error) {
+    console.log("Error updating project status:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 export {
   createProject,
   getProjectDetails,
   getProjectTasks,
   archiveProject,
   getArchivedProjects,
+  updateProjectStatus,
 };

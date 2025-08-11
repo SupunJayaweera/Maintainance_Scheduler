@@ -8,6 +8,7 @@ import {
   getProjectTasks,
   archiveProject,
   getArchivedProjects,
+  updateProjectStatus,
 } from "../controllers/project.js";
 import { z } from "zod";
 
@@ -48,6 +49,24 @@ router.put(
     params: z.object({ projectId: z.string() }),
   }),
   archiveProject
+);
+
+router.put(
+  "/:projectId/status",
+  authMiddleware,
+  validateRequest({
+    params: z.object({ projectId: z.string() }),
+    body: z.object({
+      status: z.enum([
+        "Planning",
+        "In Progress",
+        "On Hold",
+        "Completed",
+        "Cancelled",
+      ]),
+    }),
+  }),
+  updateProjectStatus
 );
 
 export default router;

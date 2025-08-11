@@ -35,6 +35,18 @@ export const useArchiveProjectMutation = () => {
   });
 };
 
+export const useUpdateProjectStatusMutation = () => {
+  return useMutation({
+    mutationFn: ({
+      projectId,
+      status,
+    }: {
+      projectId: string;
+      status: string;
+    }) => updateData(`/projects/${projectId}/status`, { status }),
+  });
+};
+
 export const useGetArchivedProjectsQuery = () => {
   return useQuery({
     queryKey: ["projects", "archived"],

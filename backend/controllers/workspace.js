@@ -121,12 +121,19 @@ const getWorkspaceStats = async (req, res) => {
     const [totalProjects, projects] = await Promise.all([
       Project.countDocuments({ workspace: workspaceId }),
       Project.find({ workspace: workspaceId })
-        .populate(
-          "tasks",
-          "title status dueDate project updatedAt isArchived priority"
-        )
+        .populate({
+          path: "tasks",
+          select:
+            "title status dueDate project updatedAt createdAt isArchived priority",
+        })
         .sort({ createdAt: -1 }),
     ]);
+
+    console.log("Projects found:", projects.length);
+    console.log("First project tasks:", projects[0]?.tasks?.length || 0);
+    if (projects[0]?.tasks?.length > 0) {
+      console.log("Sample task:", projects[0].tasks[0]);
+    }
 
     const totalTasks = projects.reduce((acc, project) => {
       return acc + project.tasks.length;
@@ -158,7 +165,20 @@ const getWorkspaceStats = async (req, res) => {
       );
     }, 0);
 
-    const tasks = projects.flatMap((project) => project.tasks);
+    const tasks = projects.flatMap((project) => project.tasks || []);
+
+    console.log("Total tasks found:", tasks.length);
+    if (tasks.length > 0) {
+      console.log(
+        "Sample tasks:",
+        tasks.slice(0, 3).map((t) => ({
+          title: t.title,
+          status: t.status,
+          createdAt: t.createdAt,
+          project: t.project,
+        }))
+      );
+    }
 
     // get upcoming task in next 7 days
 
@@ -171,59 +191,124 @@ const getWorkspaceStats = async (req, res) => {
       );
     });
 
-    const taskTrendsData = [
-      { name: "Sun", completed: 0, inProgress: 0, toDo: 0 },
-      { name: "Mon", completed: 0, inProgress: 0, toDo: 0 },
-      { name: "Tue", completed: 0, inProgress: 0, toDo: 0 },
-      { name: "Wed", completed: 0, inProgress: 0, toDo: 0 },
-      { name: "Thu", completed: 0, inProgress: 0, toDo: 0 },
-      { name: "Fri", completed: 0, inProgress: 0, toDo: 0 },
-      { name: "Sat", completed: 0, inProgress: 0, toDo: 0 },
-    ];
-
-    // get last 7 days tasks date
-    const last7Days = Array.from({ length: 7 }, (_, i) => {
+    // Use last 30 days for chart display to capture your existing data
+    const last30Days = Array.from({ length: 30 }, (_, i) => {
       const date = new Date();
       date.setDate(date.getDate() - i);
       return date;
     }).reverse();
 
-    // populate
+    // Initialize chart data based on actual last 30 days
+    const taskTrendsData = last30Days.map((date) => ({
+      name: date.toLocaleDateString("en-US", { weekday: "short" }),
+      date: date.toDateString(),
+      completed: 0,
+      inProgress: 0,
+      toDo: 0,
+    }));
 
+    console.log(
+      "Last 30 days range:",
+      last30Days[0].toDateString(),
+      "to",
+      last30Days[29].toDateString()
+    );
+    console.log("Initial taskTrendsData length:", taskTrendsData.length);
+
+    // populate task trends data - check against all tasks from last 30 days
     for (const project of projects) {
-      for (const task in project.tasks) {
-        const taskDate = new Date(task.updatedAt);
+      console.log(
+        `Project: ${project.title}, Tasks: ${project.tasks?.length || 0}`
+      );
 
-        const dayInDate = last7Days.findIndex(
-          (date) =>
-            date.getDate() === taskDate.getDate() &&
-            date.getMonth() === taskDate.getMonth() &&
-            date.getFullYear() === taskDate.getFullYear()
+      for (const task of project.tasks || []) {
+        const taskDate = new Date(task.createdAt);
+        console.log(
+          `Task: ${task.title}, Created: ${taskDate.toDateString()}, Status: ${
+            task.status
+          }`
         );
 
-        if (dayInDate !== -1) {
-          const dayName = last7Days[dayInDate].toLocaleDateString("en-US", {
-            weekday: "short",
-          });
+        // Check if task was created in the last 30 days
+        const dayIndex = last30Days.findIndex((date) => {
+          const isSameDay =
+            date.getDate() === taskDate.getDate() &&
+            date.getMonth() === taskDate.getMonth() &&
+            date.getFullYear() === taskDate.getFullYear();
+          return isSameDay;
+        });
 
-          const dayData = taskTrendsData.find((day) => day.name === dayName);
+        console.log(`Task ${task.title} dayIndex: ${dayIndex}`);
 
-          if (dayData) {
-            switch (task.status) {
-              case "Done":
-                dayData.completed++;
-                break;
-              case "In Progress":
-                dayData.inProgress++;
-                break;
-              case "To Do":
-                dayData.toDo++;
-                break;
-            }
+        if (dayIndex !== -1) {
+          switch (task.status) {
+            case "Done":
+              taskTrendsData[dayIndex].completed++;
+              console.log(
+                `Added completed task to day ${dayIndex} (${taskTrendsData[dayIndex].date})`
+              );
+              break;
+            case "In Progress":
+              taskTrendsData[dayIndex].inProgress++;
+              console.log(
+                `Added in progress task to day ${dayIndex} (${taskTrendsData[dayIndex].date})`
+              );
+              break;
+            case "To Do":
+              taskTrendsData[dayIndex].toDo++;
+              console.log(
+                `Added todo task to day ${dayIndex} (${taskTrendsData[dayIndex].date})`
+              );
+              break;
           }
         }
       }
     }
+
+    // For chart display, group by week and sum the data
+    const today = new Date();
+    const weeklyData = [
+      {
+        name: "Week 1 (Latest)",
+        period: `${last30Days[21].toLocaleDateString()} - ${last30Days[27].toLocaleDateString()}`,
+        completed: 0,
+        inProgress: 0,
+        toDo: 0,
+      },
+      {
+        name: "Week 2",
+        period: `${last30Days[14].toLocaleDateString()} - ${last30Days[20].toLocaleDateString()}`,
+        completed: 0,
+        inProgress: 0,
+        toDo: 0,
+      },
+      {
+        name: "Week 3",
+        period: `${last30Days[7].toLocaleDateString()} - ${last30Days[13].toLocaleDateString()}`,
+        completed: 0,
+        inProgress: 0,
+        toDo: 0,
+      },
+      {
+        name: "Week 4 (Oldest)",
+        period: `${last30Days[0].toLocaleDateString()} - ${last30Days[6].toLocaleDateString()}`,
+        completed: 0,
+        inProgress: 0,
+        toDo: 0,
+      },
+    ];
+
+    // Group the 30 days into 4 weeks
+    taskTrendsData.forEach((day, index) => {
+      const weekIndex = Math.floor(index / 7);
+      if (weekIndex < 4) {
+        weeklyData[weekIndex].completed += day.completed;
+        weeklyData[weekIndex].inProgress += day.inProgress;
+        weeklyData[weekIndex].toDo += day.toDo;
+      }
+    });
+
+    console.log("Final weeklyData:", JSON.stringify(weeklyData, null, 2));
 
     // get project status distribution
     const projectStatusData = [
@@ -296,7 +381,7 @@ const getWorkspaceStats = async (req, res) => {
 
     res.status(200).json({
       stats,
-      taskTrendsData,
+      taskTrendsData: weeklyData, // Use weekly data instead of daily
       projectStatusData,
       taskPriorityData,
       workspaceProductivityData,

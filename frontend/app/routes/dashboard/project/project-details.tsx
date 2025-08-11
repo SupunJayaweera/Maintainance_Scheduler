@@ -8,13 +8,22 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   UseProjectQuery,
   useArchiveProjectMutation,
+  useUpdateProjectStatusMutation,
 } from "@/hooks/use-projects";
 
 import { getProjectProgress } from "@/lib";
 import { cn } from "@/lib/utils";
-import type { Project, Task, TaskStatus } from "@/types";
+import { getTaskStatusColor } from "@/lib";
+import type { Project, Task, TaskStatus, ProjectStatus } from "@/types";
 import { format } from "date-fns";
 import {
   AlertCircle,
@@ -38,6 +47,7 @@ const ProjectDetails = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const archiveProjectMutation = useArchiveProjectMutation();
+  const updateStatusMutation = useUpdateProjectStatusMutation();
 
   const [isCreateTask, setIsCreateTask] = useState(false);
   const [taskFilter, setTaskFilter] = useState<TaskStatus | "All">("All");
@@ -91,6 +101,26 @@ const ProjectDetails = () => {
     }
   };
 
+  const handleStatusChange = async (newStatus: string) => {
+    if (!projectId) return;
+
+    try {
+      await updateStatusMutation.mutateAsync({
+        projectId,
+        status: newStatus,
+      });
+
+      // Invalidate and refetch project data
+      queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["workspace", workspaceId] });
+
+      toast.success("Project status updated successfully");
+    } catch (error) {
+      console.error("Status update error:", error);
+      toast.error("Failed to update project status");
+    }
+  };
+
   // Check if current user can archive the project
   const currentUserMember = project.members?.find((member) => {
     const memberId =
@@ -109,6 +139,9 @@ const ProjectDetails = () => {
     currentUserMember?.role === "manager" ||
     workspaceMember?.role === "owner" ||
     workspaceMember?.role === "admin";
+
+  // Check if current user can update project status (same permissions as archive)
+  const canUpdateStatus = canArchive;
 
   console.log(project.isArchived, canArchive);
 
@@ -130,9 +163,39 @@ const ProjectDetails = () => {
                 Archived
               </Badge>
             )}
+            <Badge
+              variant="secondary"
+              className={cn(
+                "text-xs",
+                getTaskStatusColor(project.status as ProjectStatus)
+              )}
+            >
+              {project.status}
+            </Badge>
           </div>
           {project.description && (
             <p className="text-sm text-gray-500">{project.description}</p>
+          )}
+          {canUpdateStatus && !project.isArchived && (
+            <div className="flex items-center gap-2 mt-2">
+              <span className="text-sm text-muted-foreground">Status:</span>
+              <Select
+                value={project.status}
+                onValueChange={handleStatusChange}
+                disabled={updateStatusMutation.isPending}
+              >
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Planning">Planning</SelectItem>
+                  <SelectItem value="In Progress">In Progress</SelectItem>
+                  <SelectItem value="On Hold">On Hold</SelectItem>
+                  <SelectItem value="Completed">Completed</SelectItem>
+                  <SelectItem value="Cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           )}
         </div>
 
