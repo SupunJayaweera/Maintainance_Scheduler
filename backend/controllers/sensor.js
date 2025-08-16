@@ -108,7 +108,7 @@ const getLatestSensorReading = async (req, res) => {
     })
       .then((data) => {
         const latestReading = data[0];
-        
+
         if (!latestReading) {
           // No data found - sensors offline
           return res.status(200).json({
@@ -119,8 +119,8 @@ const getLatestSensorReading = async (req, res) => {
             vibrationZ: 0,
             temperatureA: 0,
             temperatureB: 0,
-            status: 'offline',
-            message: 'Sensors are offline'
+            status: "offline",
+            message: "Sensors are offline",
           });
         }
 
@@ -139,17 +139,17 @@ const getLatestSensorReading = async (req, res) => {
             vibrationZ: 0,
             temperatureA: 0,
             temperatureB: 0,
-            status: 'offline',
-            message: 'Sensors are offline',
-            lastSeen: latestReading.timestamp
+            status: "offline",
+            message: "Sensors are offline",
+            lastSeen: latestReading.timestamp,
           });
         }
 
         // Data is fresh - sensors online
         res.status(200).json({
           ...latestReading,
-          status: 'online',
-          message: 'Sensors are online'
+          status: "online",
+          message: "Sensors are online",
         });
       })
       .catch((error) => {
