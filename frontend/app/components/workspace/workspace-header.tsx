@@ -1,9 +1,10 @@
 import type { User, Workspace } from "@/types";
 import { WorkspaceAvatar } from "./workspace-avatar";
 import { Button } from "../ui/button";
-import { Archive, Plus, UserPlus } from "lucide-react";
+import { Archive, Plus, UserPlus, BarChart3 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useAuth } from "@/provider/auth-context";
+import { useNavigate } from "react-router";
 
 interface WorkspaceHeaderProps {
   workspace?: Workspace;
@@ -25,6 +26,7 @@ export const WorkspaceHeader = ({
   onArchiveWorkspace,
 }: WorkspaceHeaderProps) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   // Add debugging
   // console.log("WorkspaceHeader received:", { workspace, members });
@@ -41,6 +43,10 @@ export const WorkspaceHeader = ({
   const canArchive =
     currentUserMember?.role === "owner" || currentUserMember?.role === "admin";
 
+  const handleAnalyticsClick = () => {
+    navigate(`/workspaces/${workspace._id}/analytics`);
+  };
+
   return (
     <div className="space-y-8">
       <div className="space-y-3">
@@ -56,6 +62,10 @@ export const WorkspaceHeader = ({
           </div>
 
           <div className="flex items-center gap-3 justify-between md:justify-start mb-4 md:mb-0">
+            <Button variant={"secondary"} onClick={handleAnalyticsClick}>
+              <BarChart3 className="size-4 mr-2" />
+              Analytics
+            </Button>
             <Button variant={"outline"} onClick={onInviteMember}>
               <UserPlus className="size-4 mr-2" />
               Invite Member
