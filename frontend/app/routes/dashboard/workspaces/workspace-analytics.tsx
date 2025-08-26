@@ -18,6 +18,7 @@ import {
   useSensorDataQuery,
   useLatestSensorDataQuery,
 } from "@/hooks/use-sensor-data";
+import { NotificationBell } from "@/components/notification-bell";
 
 interface SensorData {
   timestamp: string;
@@ -151,31 +152,36 @@ const WorkspaceAnalytics = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => navigate(`/workspaces/${workspaceId}`)}
-        >
-          <ArrowLeft className="size-4 mr-2" />
-          Back to Workspace
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold">Real-time Analytics</h1>
-          <p className="text-muted-foreground">
-            Live sensor data monitoring
-            <span
-              className={`ml-2 inline-block w-2 h-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}
-            ></span>
-            <span className="ml-1 text-sm">
-              {latestSensorReading?.status === "offline"
-                ? `Sensors Offline ${latestSensorReading.lastSeen ? `(Last seen: ${formatTime(latestSensorReading.lastSeen)})` : ""}`
-                : isConnected
-                  ? "Sensors Online"
-                  : "Connecting..."}
-            </span>
-          </p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate(`/workspaces/${workspaceId}`)}
+          >
+            <ArrowLeft className="size-4 mr-2" />
+            Back to Workspace
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold">Real-time Analytics</h1>
+            <p className="text-muted-foreground">
+              Live sensor data monitoring
+              <span
+                className={`ml-2 inline-block w-2 h-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}
+              ></span>
+              <span className="ml-1 text-sm">
+                {latestSensorReading?.status === "offline"
+                  ? `Sensors Offline ${latestSensorReading.lastSeen ? `(Last seen: ${formatTime(latestSensorReading.lastSeen)})` : ""}`
+                  : isConnected
+                    ? "Sensors Online"
+                    : "Connecting..."}
+              </span>
+            </p>
+          </div>
         </div>
+
+        {/* Notification Bell */}
+        <NotificationBell workspaceName="Analytics Workspace" />
       </div>
 
       {/* Current Status Cards */}

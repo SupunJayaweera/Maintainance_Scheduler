@@ -27,14 +27,28 @@ const workspaceIds = [
 function generateSensorData(workspaceId) {
   const now = new Date();
 
+  // Add some occasional threshold violations for testing notifications
+  const shouldCreateSpike = Math.random() < 0.05; // 5% chance of spike
+  const spikeType = Math.floor(Math.random() * 3); // 0: current, 1: vibration, 2: temperature
+
   // Current sensor (0-50A with some noise and patterns)
-  const baseCurrent = 25 + 10 * Math.sin(Date.now() / 60000); // 1-minute cycle
+  let baseCurrent = 25 + 10 * Math.sin(Date.now() / 60000); // 1-minute cycle
+  if (shouldCreateSpike && spikeType === 0) {
+    baseCurrent = 25; // Above 20A threshold for testing
+  }
   const current = Math.max(0, baseCurrent + (Math.random() - 0.5) * 5);
 
   // Vibration data (ADXL345 accelerometer, -16g to +16g)
-  const baseVibrationX = 0.1 * Math.sin(Date.now() / 5000); // 5-second cycle
-  const baseVibrationY = 0.1 * Math.cos(Date.now() / 7000); // 7-second cycle
-  const baseVibrationZ = 1.0 + 0.05 * Math.sin(Date.now() / 3000); // Gravity + small variation
+  let baseVibrationX = 0.1 * Math.sin(Date.now() / 5000); // 5-second cycle
+  let baseVibrationY = 0.1 * Math.cos(Date.now() / 7000); // 7-second cycle
+  let baseVibrationZ = 1.0 + 0.05 * Math.sin(Date.now() / 3000); // Gravity + small variation
+
+  if (shouldCreateSpike && spikeType === 1) {
+    // Create high vibration spike above 1.5g threshold
+    baseVibrationX = 1.8 * (Math.random() - 0.5);
+    baseVibrationY = 1.8 * (Math.random() - 0.5);
+    baseVibrationZ = 1.8;
+  }
 
   const vibrationX = baseVibrationX + (Math.random() - 0.5) * 0.2;
   const vibrationY = baseVibrationY + (Math.random() - 0.5) * 0.2;
@@ -42,7 +56,11 @@ function generateSensorData(workspaceId) {
 
   // Temperature sensors (20-80°C with daily patterns)
   const hourOfDay = now.getHours();
-  const dailyTempPattern = 30 + 20 * Math.sin(((hourOfDay - 6) * Math.PI) / 12); // Peak at 2 PM
+  let dailyTempPattern = 30 + 20 * Math.sin(((hourOfDay - 6) * Math.PI) / 12); // Peak at 2 PM
+
+  if (shouldCreateSpike && spikeType === 2) {
+    dailyTempPattern = 65; // Above 60°C threshold for testing
+  }
 
   const temperatureA = dailyTempPattern + (Math.random() - 0.5) * 3;
   const temperatureB = dailyTempPattern + 5 + (Math.random() - 0.5) * 3; // Slightly warmer
