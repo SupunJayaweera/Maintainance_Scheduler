@@ -41,20 +41,28 @@ export const SidebarNav = ({
         };
         return (
           <Button
-            variant={isActive ? "outline" : "ghost"}
+            variant="ghost"
             key={el.href}
             onClick={handleClick}
             className={cn(
-              "justify-start",
-              isActive && "bg-blue-800/20 text-blue-600 font-medium"
+              "justify-start group transition-all duration-200 border border-transparent",
+              isActive
+                ? "bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-white border-blue-500/30 font-medium shadow-md"
+                : "text-slate-300 hover:text-white hover:bg-slate-800/50 hover:border-slate-700/50",
+              isCollapsed ? "w-10 h-10 p-0" : "w-full"
             )}
           >
-            <Icon className="mr-2 size-4" />
-            {isCollapsed ? (
-              <span className="sr-only">{el.title}</span>
-            ) : (
-              el.title
-            )}
+            <Icon
+              className={cn(
+                "size-4 transition-colors duration-200",
+                isActive
+                  ? "text-blue-400"
+                  : "text-slate-400 group-hover:text-white",
+                isCollapsed ? "mx-auto" : "mr-3"
+              )}
+            />
+            {!isCollapsed && <span className="font-medium">{el.title}</span>}
+            {isCollapsed && <span className="sr-only">{el.title}</span>}
           </Button>
         );
       })}
