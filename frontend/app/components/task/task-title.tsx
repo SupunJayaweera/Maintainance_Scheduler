@@ -36,18 +36,18 @@ export const TaskTitle = ({
     <div className="flex items-center gap-2">
       {isEditing ? (
         <Input
-          className="text-xl! font-semibold w-full min-w-3xl"
+          className="text-xl! font-semibold w-full min-w-3xl bg-slate-700/50 border-slate-600/50 text-white focus:border-blue-500/50"
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
           disabled={isPending}
         />
       ) : (
-        <h2 className="text-xl flex-1 font-semibold">{title}</h2>
+        <h2 className="text-xl flex-1 font-semibold text-white">{title}</h2>
       )}
 
       {isEditing ? (
         <Button
-          className="py-0"
+          className="py-0 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white border-0"
           size="sm"
           onClick={updateTitle}
           disabled={isPending}
@@ -56,7 +56,7 @@ export const TaskTitle = ({
         </Button>
       ) : (
         <Edit
-          className="size-3 cursor-pointer"
+          className="size-3 cursor-pointer text-slate-300 hover:text-white"
           onClick={() => setIsEditing(true)}
         />
       )}

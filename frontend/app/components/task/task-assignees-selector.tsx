@@ -67,28 +67,30 @@ export const TaskAssigneesSelector = ({
 
   return (
     <div className="mb-6">
-      <h3 className="text-sm font-medium text-muted-foreground mb-2">
-        Assignees
+      <h3 className="text-sm font-medium text-slate-200 mb-2">
+        Assigned Technicians
       </h3>
 
       <div className="flex flex-wrap gap-2 mb-2">
         {selectedIds.length === 0 ? (
-          <span className="text-xs text-muted-foreground">Unassigned</span>
+          <span className="text-xs text-slate-400">
+            No technicians assigned
+          </span>
         ) : (
           projectMembers
             .filter((member) => selectedIds.includes(member.user._id))
             .map((m) => (
               <div
                 key={m.user._id}
-                className="flex items-center bg-gray-100 rounded px-2 py-1"
+                className="flex items-center bg-slate-700/50 border border-slate-600/50 rounded px-2 py-1"
               >
-                <Avatar className="size-6 mr-1">
+                <Avatar className="size-6 mr-1 bg-slate-600 border border-slate-500">
                   <AvatarImage src={m.user.profilePicture} />
-                  <AvatarFallback>{m.user.name.charAt(0)}</AvatarFallback>
+                  <AvatarFallback className="text-white text-xs">
+                    {m.user.name.charAt(0)}
+                  </AvatarFallback>
                 </Avatar>
-                <span className="text-xs text-muted-foreground">
-                  {m.user.name}
-                </span>
+                <span className="text-xs text-white">{m.user.name}</span>
               </div>
             ))
         )}
@@ -97,25 +99,25 @@ export const TaskAssigneesSelector = ({
       {/* dropdown */}
       <div className="relative">
         <button
-          className="text-sm text-muted-foreground w-full border rounded px-3 py-2 text-left bg-white"
+          className="text-sm text-white w-full border border-slate-600/50 rounded px-3 py-2 text-left bg-slate-700/50 hover:bg-slate-600/50"
           onClick={() => setDropDownOpen(!dropDownOpen)}
         >
           {selectedIds.length === 0
-            ? "Select assignees"
-            : `${selectedIds.length} selected`}
+            ? "Select maintenance team"
+            : `${selectedIds.length} technicians selected`}
         </button>
 
         {dropDownOpen && (
-          <div className="absolute z-10 mt-1 w-full bg-white border rounded shadow-lg max-h-60 overflow-y-auto">
-            <div className="flex justify-between px-2 py-1 border-b">
+          <div className="absolute z-10 mt-1 w-full bg-slate-800 border border-slate-700 rounded shadow-lg max-h-60 overflow-y-auto">
+            <div className="flex justify-between px-2 py-1 border-b border-slate-700">
               <button
-                className="text-xs text-blue-600"
+                className="text-xs text-blue-400 hover:text-blue-300"
                 onClick={handleSelectAll}
               >
                 Select all
               </button>
               <button
-                className="text-xs text-red-600"
+                className="text-xs text-red-400 hover:text-red-300"
                 onClick={handleUnSelectAll}
               >
                 Unselect all
@@ -124,29 +126,31 @@ export const TaskAssigneesSelector = ({
 
             {projectMembers.map((m) => (
               <label
-                className="flex items-center px-3 py-2 cursor-pointer hover:bg-gray-50"
+                className="flex items-center px-3 py-2 cursor-pointer hover:bg-slate-700/50 text-white"
                 key={m.user._id}
               >
                 <Checkbox
                   checked={selectedIds.includes(m.user._id)}
                   onCheckedChange={() => handleSelect(m.user._id)}
-                  className="mr-2"
+                  className="mr-2 data-[state=checked]:bg-blue-600 border-slate-500"
                 />
 
-                <Avatar className="size-6 mr-2">
+                <Avatar className="size-6 mr-2 bg-slate-600 border border-slate-500">
                   <AvatarImage src={m.user.profilePicture} />
-                  <AvatarFallback>{m.user.name.charAt(0)}</AvatarFallback>
+                  <AvatarFallback className="text-white text-xs">
+                    {m.user.name.charAt(0)}
+                  </AvatarFallback>
                 </Avatar>
 
                 <span>{m.user.name}</span>
               </label>
             ))}
 
-            <div className="flex justify-between px-2 py-1">
+            <div className="flex justify-between px-2 py-1 bg-slate-900/50 border-t border-slate-700">
               <Button
                 variant={"outline"}
                 size={"sm"}
-                className="font-light"
+                className="font-light bg-slate-700/50 border-slate-600/50 text-white hover:bg-slate-600/50"
                 onClickCapture={() => setDropDownOpen(false)}
                 disabled={isPending}
               >
@@ -154,11 +158,11 @@ export const TaskAssigneesSelector = ({
               </Button>
               <Button
                 size={"sm"}
-                className="font-light"
+                className="font-light bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white border-0"
                 disabled={isPending}
                 onClickCapture={() => handleSave()}
               >
-                Save
+                {isPending ? "Saving..." : "Save"}
               </Button>
             </div>
           </div>

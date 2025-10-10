@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { IndustrialPageLayout } from "@/components/layout/industrial-page-layout";
 import {
   Select,
   SelectContent,
@@ -151,187 +152,215 @@ const ProjectDetails = () => {
     workspaceMember?.role
   );
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <BackButton />
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl md:text-2xl font-bold">{project.title}</h1>
-            {project.isArchived && (
-              <Badge variant="outline" className="text-xs">
-                <Archive className="h-3 w-3 mr-1" />
-                Archived
-              </Badge>
-            )}
-            <Badge
-              variant="secondary"
-              className={cn(
-                "text-xs",
-                getTaskStatusColor(project.status as ProjectStatus)
+    <IndustrialPageLayout
+      title={`Project: ${project.title}`}
+      subtitle="Maintenance project management and task coordination"
+      icon={Calendar}
+      headerBadge={{
+        label: `${tasks.length} Tasks`,
+        color: "bg-blue-500/20 text-blue-300 border-blue-500/30",
+        icon: Clock,
+      }}
+    >
+      <div className="space-y-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <BackButton />
+            <div className="flex items-center gap-3">
+              <h1 className="text-xl md:text-2xl font-bold text-white">
+                {project.title}
+              </h1>
+              {project.isArchived && (
+                <Badge variant="outline" className="text-xs">
+                  <Archive className="h-3 w-3 mr-1" />
+                  Archived
+                </Badge>
               )}
-            >
-              {project.status}
-            </Badge>
-          </div>
-          {project.description && (
-            <p className="text-sm text-gray-500">{project.description}</p>
-          )}
-          {canUpdateStatus && !project.isArchived && (
-            <div className="flex items-center gap-2 mt-2">
-              <span className="text-sm text-muted-foreground">Status:</span>
-              <Select
-                value={project.status}
-                onValueChange={handleStatusChange}
-                disabled={updateStatusMutation.isPending}
+              <Badge
+                variant="secondary"
+                className={cn(
+                  "text-xs",
+                  getTaskStatusColor(project.status as ProjectStatus)
+                )}
               >
-                <SelectTrigger className="w-40">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Planning">Planning</SelectItem>
-                  <SelectItem value="In Progress">In Progress</SelectItem>
-                  <SelectItem value="On Hold">On Hold</SelectItem>
-                  <SelectItem value="Completed">Completed</SelectItem>
-                  <SelectItem value="Cancelled">Cancelled</SelectItem>
-                </SelectContent>
-              </Select>
+                {project.status}
+              </Badge>
             </div>
-          )}
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="flex items-center gap-2 min-w-32">
-            <div className="text-sm text-muted-foreground">Progress:</div>
-            <div className="flex-1">
-              <Progress value={projectProgress} className="h-2" />
-            </div>
-            <span className="text-sm text-muted-foreground">
-              {projectProgress}%
-            </span>
-          </div>
-
-          <div className="flex gap-2">
-            {canArchive && (
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={handleArchiveProject}
-                title={
-                  project.isArchived ? "Unarchive Project" : "Archive Project"
-                }
-              >
-                <Archive className="size-4 mr-2" />
-                {project.isArchived ? "Unarchive" : "Archive"}
-              </Button>
+            {project.description && (
+              <p className="text-sm text-slate-300">{project.description}</p>
             )}
-            <Button onClick={() => setIsCreateTask(true)}>Add Task</Button>
+            {canUpdateStatus && !project.isArchived && (
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-sm text-slate-300">Status:</span>
+                <Select
+                  value={project.status}
+                  onValueChange={handleStatusChange}
+                  disabled={updateStatusMutation.isPending}
+                >
+                  <SelectTrigger className="w-40">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Planning">Planning</SelectItem>
+                    <SelectItem value="In Progress">In Progress</SelectItem>
+                    <SelectItem value="On Hold">On Hold</SelectItem>
+                    <SelectItem value="Completed">Completed</SelectItem>
+                    <SelectItem value="Cancelled">Cancelled</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex items-center gap-2 min-w-32">
+              <div className="text-sm text-slate-300">Progress:</div>
+              <div className="flex-1">
+                <Progress value={projectProgress} className="h-2" />
+              </div>
+              <span className="text-sm text-slate-300">{projectProgress}%</span>
+            </div>
+
+            <div className="flex gap-2">
+              {canArchive && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={handleArchiveProject}
+                  title={
+                    project.isArchived ? "Unarchive Project" : "Archive Project"
+                  }
+                >
+                  <Archive className="size-4 mr-2" />
+                  {project.isArchived ? "Unarchive" : "Archive"}
+                </Button>
+              )}
+              <Button onClick={() => setIsCreateTask(true)}>Add Task</Button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="flex items-center justify-between">
-        <Tabs defaultValue="all" className="w-full">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <TabsList>
-              <TabsTrigger value="all" onClick={() => setTaskFilter("All")}>
-                All Tasks
-              </TabsTrigger>
-              <TabsTrigger value="todo" onClick={() => setTaskFilter("To Do")}>
-                To Do
-              </TabsTrigger>
-              <TabsTrigger
-                value="in-progress"
-                onClick={() => setTaskFilter("In Progress")}
-              >
-                In Progress
-              </TabsTrigger>
-              <TabsTrigger value="done" onClick={() => setTaskFilter("Done")}>
-                Done
-              </TabsTrigger>
-            </TabsList>
-
-            <div className="flex items-center text-sm">
-              <span className="text-muted-foreground">Status:</span>
-              <div>
-                <Badge variant="outline" className="bg-background">
-                  {tasks.filter((task) => task.status === "To Do").length} To Do
-                </Badge>
-                <Badge variant="outline" className="bg-background">
-                  {tasks.filter((task) => task.status === "In Progress").length}{" "}
+        <div className="flex items-center justify-between">
+          <Tabs defaultValue="all" className="w-full">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <TabsList className="bg-slate-700/50 border-slate-600/50">
+                <TabsTrigger
+                  value="all"
+                  onClick={() => setTaskFilter("All")}
+                  className="text-slate-300 data-[state=active]:bg-slate-600 data-[state=active]:text-white"
+                >
+                  All Tasks
+                </TabsTrigger>
+                <TabsTrigger
+                  value="todo"
+                  onClick={() => setTaskFilter("To Do")}
+                  className="text-slate-300 data-[state=active]:bg-slate-600 data-[state=active]:text-white"
+                >
+                  Scheduled
+                </TabsTrigger>
+                <TabsTrigger
+                  value="in-progress"
+                  onClick={() => setTaskFilter("In Progress")}
+                  className="text-slate-300 data-[state=active]:bg-slate-600 data-[state=active]:text-white"
+                >
                   In Progress
-                </Badge>
-                <Badge variant="outline" className="bg-background">
-                  {tasks.filter((task) => task.status === "Done").length} Done
-                </Badge>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="done"
+                  onClick={() => setTaskFilter("Done")}
+                  className="text-slate-300 data-[state=active]:bg-slate-600 data-[state=active]:text-white"
+                >
+                  Completed
+                </TabsTrigger>
+              </TabsList>
+
+              <div className="flex items-center text-sm">
+                <span className="text-slate-300">Status:</span>
+                <div>
+                  <Badge variant="outline" className="bg-background">
+                    {tasks.filter((task) => task.status === "To Do").length} To
+                    Do
+                  </Badge>
+                  <Badge variant="outline" className="bg-background">
+                    {
+                      tasks.filter((task) => task.status === "In Progress")
+                        .length
+                    }{" "}
+                    In Progress
+                  </Badge>
+                  <Badge variant="outline" className="bg-background">
+                    {tasks.filter((task) => task.status === "Done").length} Done
+                  </Badge>
+                </div>
               </div>
             </div>
-          </div>
 
-          <TabsContent value="all" className="m-0">
-            <div className="grid grid-cols-3 gap-4">
-              <TaskColumn
-                title="To Do"
-                tasks={tasks.filter((task) => task.status === "To Do")}
-                onTaskClick={handleTaskClick}
-              />
+            <TabsContent value="all" className="m-0">
+              <div className="grid grid-cols-3 gap-4">
+                <TaskColumn
+                  title="To Do"
+                  tasks={tasks.filter((task) => task.status === "To Do")}
+                  onTaskClick={handleTaskClick}
+                />
 
-              <TaskColumn
-                title="In Progress"
-                tasks={tasks.filter((task) => task.status === "In Progress")}
-                onTaskClick={handleTaskClick}
-              />
+                <TaskColumn
+                  title="In Progress"
+                  tasks={tasks.filter((task) => task.status === "In Progress")}
+                  onTaskClick={handleTaskClick}
+                />
 
-              <TaskColumn
-                title="Done"
-                tasks={tasks.filter((task) => task.status === "Done")}
-                onTaskClick={handleTaskClick}
-              />
-            </div>
-          </TabsContent>
+                <TaskColumn
+                  title="Done"
+                  tasks={tasks.filter((task) => task.status === "Done")}
+                  onTaskClick={handleTaskClick}
+                />
+              </div>
+            </TabsContent>
 
-          <TabsContent value="todo" className="m-0">
-            <div className="grid md:grid-cols-1 gap-4">
-              <TaskColumn
-                title="To Do"
-                tasks={tasks.filter((task) => task.status === "To Do")}
-                onTaskClick={handleTaskClick}
-                isFullWidth
-              />
-            </div>
-          </TabsContent>
+            <TabsContent value="todo" className="m-0">
+              <div className="grid md:grid-cols-1 gap-4">
+                <TaskColumn
+                  title="To Do"
+                  tasks={tasks.filter((task) => task.status === "To Do")}
+                  onTaskClick={handleTaskClick}
+                  isFullWidth
+                />
+              </div>
+            </TabsContent>
 
-          <TabsContent value="in-progress" className="m-0">
-            <div className="grid md:grid-cols-1 gap-4">
-              <TaskColumn
-                title="In Progress"
-                tasks={tasks.filter((task) => task.status === "In Progress")}
-                onTaskClick={handleTaskClick}
-                isFullWidth
-              />
-            </div>
-          </TabsContent>
+            <TabsContent value="in-progress" className="m-0">
+              <div className="grid md:grid-cols-1 gap-4">
+                <TaskColumn
+                  title="In Progress"
+                  tasks={tasks.filter((task) => task.status === "In Progress")}
+                  onTaskClick={handleTaskClick}
+                  isFullWidth
+                />
+              </div>
+            </TabsContent>
 
-          <TabsContent value="done" className="m-0">
-            <div className="grid md:grid-cols-1 gap-4">
-              <TaskColumn
-                title="Done"
-                tasks={tasks.filter((task) => task.status === "Done")}
-                onTaskClick={handleTaskClick}
-                isFullWidth
-              />
-            </div>
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="done" className="m-0">
+              <div className="grid md:grid-cols-1 gap-4">
+                <TaskColumn
+                  title="Done"
+                  tasks={tasks.filter((task) => task.status === "Done")}
+                  onTaskClick={handleTaskClick}
+                  isFullWidth
+                />
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        {/* create    task dialog */}
+        <CreateTaskDialog
+          open={isCreateTask}
+          onOpenChange={setIsCreateTask}
+          projectId={projectId!}
+          projectMembers={project.members as any}
+        />
       </div>
-
-      {/* create    task dialog */}
-      <CreateTaskDialog
-        open={isCreateTask}
-        onOpenChange={setIsCreateTask}
-        projectId={projectId!}
-        projectMembers={project.members as any}
-      />
-    </div>
+    </IndustrialPageLayout>
   );
 };
 
@@ -366,8 +395,13 @@ const TaskColumn = ({
       >
         {!isFullWidth && (
           <div className="flex items-center justify-between">
-            <h1 className="font-medium">{title}</h1>
-            <Badge variant="outline">{tasks.length}</Badge>
+            <h1 className="font-medium text-white">{title}</h1>
+            <Badge
+              variant="outline"
+              className="border-slate-600 text-slate-300"
+            >
+              {tasks.length}
+            </Badge>
           </div>
         )}
 
@@ -378,7 +412,7 @@ const TaskColumn = ({
           )}
         >
           {tasks.length === 0 ? (
-            <div className="text-center text-sm text-muted-foreground">
+            <div className="text-center text-sm text-slate-400">
               No tasks yet
             </div>
           ) : (
@@ -400,20 +434,24 @@ const TaskCard = ({ task, onClick }: { task: Task; onClick: () => void }) => {
   return (
     <Card
       onClick={onClick}
-      className="cursor-pointer hover:shadow-md transition-all duration-300 hover:translate-y-1"
+      className="cursor-pointer bg-slate-800/50 border-slate-700/50 hover:bg-slate-700/50 hover:border-slate-600/50 transition-all duration-300 hover:shadow-lg hover:shadow-slate-900/20"
     >
       <CardHeader>
         <div className="flex items-center justify-between">
           <Badge
             className={
               task.priority === "High"
-                ? "bg-red-500 text-white"
+                ? "bg-red-600/80 hover:bg-red-600 text-white border-red-500/50"
                 : task.priority === "Medium"
-                  ? "bg-orange-500 text-white"
-                  : "bg-slate-500 text-white"
+                  ? "bg-amber-600/80 hover:bg-amber-600 text-white border-amber-500/50"
+                  : "bg-slate-600/80 hover:bg-slate-600 text-white border-slate-500/50"
             }
           >
-            {task.priority}
+            {task.priority === "High"
+              ? "Critical"
+              : task.priority === "Medium"
+                ? "Standard"
+                : "Routine"}
           </Badge>
 
           <div className="flex gap-1">
@@ -421,7 +459,7 @@ const TaskCard = ({ task, onClick }: { task: Task; onClick: () => void }) => {
               <Button
                 variant={"ghost"}
                 size={"icon"}
-                className="size-6"
+                className="size-6 hover:bg-slate-600/50 text-slate-300 hover:text-white"
                 onClick={() => {
                   console.log("mark as to do");
                 }}
@@ -435,7 +473,7 @@ const TaskCard = ({ task, onClick }: { task: Task; onClick: () => void }) => {
               <Button
                 variant={"ghost"}
                 size={"icon"}
-                className="size-6"
+                className="size-6 hover:bg-slate-600/50 text-slate-300 hover:text-white"
                 onClick={() => {
                   console.log("mark as in progress");
                 }}
@@ -449,7 +487,7 @@ const TaskCard = ({ task, onClick }: { task: Task; onClick: () => void }) => {
               <Button
                 variant={"ghost"}
                 size={"icon"}
-                className="size-6"
+                className="size-6 hover:bg-slate-600/50 text-slate-300 hover:text-white"
                 onClick={() => {
                   console.log("mark as done");
                 }}
@@ -464,10 +502,10 @@ const TaskCard = ({ task, onClick }: { task: Task; onClick: () => void }) => {
       </CardHeader>
 
       <CardContent>
-        <h4 className="ont-medium mb-2">{task.title}</h4>
+        <h4 className="font-medium mb-2 text-white">{task.title}</h4>
 
         {task.description && (
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+          <p className="text-sm text-slate-300 line-clamp-2 mb-2">
             {task.description}
           </p>
         )}
@@ -479,7 +517,7 @@ const TaskCard = ({ task, onClick }: { task: Task; onClick: () => void }) => {
                 {task.assignees.slice(0, 5).map((member) => (
                   <Avatar
                     key={member._id}
-                    className="relative size-8 bg-gray-700 rounded-full border-2 border-background overflow-hidden"
+                    className="relative size-8 bg-slate-600 rounded-full border-2 border-slate-800 overflow-hidden"
                     title={member.name}
                   >
                     <AvatarImage src={member.profilePicture} />
@@ -488,7 +526,7 @@ const TaskCard = ({ task, onClick }: { task: Task; onClick: () => void }) => {
                 ))}
 
                 {task.assignees.length > 5 && (
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-xs text-slate-400">
                     + {task.assignees.length - 5}
                   </span>
                 )}
@@ -497,7 +535,7 @@ const TaskCard = ({ task, onClick }: { task: Task; onClick: () => void }) => {
           </div>
 
           {task.dueDate && (
-            <div className="text-xs text-muted-foreground flex items-center">
+            <div className="text-xs text-slate-400 flex items-center">
               <Calendar className="size-3 mr-1" />
               {format(new Date(task.dueDate), "MMM d, yyyy")}
             </div>
@@ -505,7 +543,7 @@ const TaskCard = ({ task, onClick }: { task: Task; onClick: () => void }) => {
         </div>
         {/* 5/10 subtasks */}
         {task.subtasks && task.subtasks.length > 0 && (
-          <div className="mt-2 text-xs text-muted-foreground">
+          <div className="mt-2 text-xs text-slate-400">
             {task.subtasks.filter((subtask) => subtask.completed).length} /{" "}
             {task.subtasks.length} subtasks
           </div>

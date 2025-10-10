@@ -85,12 +85,14 @@ export const CreateWorkspace = ({
       onOpenChange={setIsCreatingWorkspace}
       modal={true}
     >
-      <DialogContent className="max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-h-[80vh] overflow-y-auto bg-slate-800/95 backdrop-blur-md border-slate-700/50">
         <DialogHeader>
-          <DialogTitle>Create Workspace</DialogTitle>
-          <DialogDescription>
-            Create a new workspace to organize your maintenance tasks and
-            collaborate with your team.
+          <DialogTitle className="text-white text-xl font-semibold">
+            Create Industrial Workspace
+          </DialogTitle>
+          <DialogDescription className="text-slate-400">
+            Create a new workspace to organize your industrial maintenance
+            operations and collaborate with your team.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -101,9 +103,15 @@ export const CreateWorkspace = ({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Workspace Name</FormLabel>
+                    <FormLabel className="text-slate-200 font-medium">
+                      Facility Name
+                    </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Workspace Name" />
+                      <Input
+                        {...field}
+                        placeholder="e.g., Main Production Facility"
+                        className="bg-slate-700/50 border-slate-600/50 text-white placeholder:text-slate-400 focus:border-blue-500/50 focus:ring-blue-500/20"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -115,12 +123,15 @@ export const CreateWorkspace = ({
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Workspace Description</FormLabel>
+                    <FormLabel className="text-slate-200 font-medium">
+                      Facility Description
+                    </FormLabel>
                     <FormControl>
                       <Textarea
                         {...field}
-                        placeholder="Workspace Description"
+                        placeholder="Describe the industrial facility and maintenance operations..."
                         rows={3}
+                        className="bg-slate-700/50 border-slate-600/50 text-white placeholder:text-slate-400 focus:border-blue-500/50 focus:ring-blue-500/20 resize-none"
                       />
                     </FormControl>
                     <FormMessage />
@@ -133,17 +144,19 @@ export const CreateWorkspace = ({
                 name="color"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Workspace Color</FormLabel>
+                    <FormLabel className="text-slate-200 font-medium">
+                      Industrial Color Theme
+                    </FormLabel>
                     <FormControl>
-                      <div className="flex gap-3 flex-wrap">
+                      <div className="flex gap-3 flex-wrap p-3 bg-slate-700/20 rounded-lg border border-slate-600/30">
                         {colorOptions.map((color) => (
                           <div
                             key={color}
                             onClick={() => field.onChange(color)}
                             className={cn(
-                              "w-6 h-6 rounded-full cursor-pointer hover:opacity-80 transition-all duration-300",
+                              "w-8 h-8 rounded-full cursor-pointer hover:scale-110 transition-all duration-300 border-2 border-slate-600",
                               field.value === color &&
-                                "ring-2 ring-offset-2 ring-blue-500"
+                                "ring-2 ring-offset-2 ring-offset-slate-800 ring-blue-400 scale-110"
                             )}
                             style={{ backgroundColor: color }}
                           ></div>
@@ -156,9 +169,21 @@ export const CreateWorkspace = ({
               />
             </div>
 
-            <DialogFooter>
-              <Button type="submit" disabled={isPending}>
-                {isPending ? "Creating..." : "Create"}
+            <DialogFooter className="gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsCreatingWorkspace(false)}
+                className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white"
+              >
+                {isPending ? "Creating Facility..." : "Create Workspace"}
               </Button>
             </DialogFooter>
           </form>

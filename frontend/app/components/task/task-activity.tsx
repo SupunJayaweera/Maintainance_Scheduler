@@ -16,24 +16,32 @@ export const TaskActivity = ({ resourceId }: { resourceId: string }) => {
   if (isPending) return <Loader />;
 
   return (
-    <div className="bg-card rounded-lg p-6 shadow-sm">
-      <h3 className="text-lg text-muted-foreground mb-4">Activity</h3>
+    <div className="bg-slate-800/50 border border-slate-700/50 rounded-lg p-6 shadow-sm">
+      <h3 className="text-lg text-white mb-4">Task Activity Log</h3>
 
       <div className="space-y-4">
-        {data?.map((activity) => (
-          <div key={activity._id} className="flex gap-2">
-            <div className="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              {getActivityIcon(activity.action)}
-            </div>
+        {data?.length > 0 ? (
+          data.map((activity) => (
+            <div key={activity._id} className="flex gap-3">
+              <div className="size-8 rounded-full bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400">
+                {getActivityIcon(activity.action)}
+              </div>
 
-            <div>
-              <p className="text-sm">
-                <span className="font-medium">{activity.user.name}</span>{" "}
-                {activity.details?.description}
-              </p>
+              <div className="flex-1">
+                <p className="text-sm text-slate-300">
+                  <span className="font-medium text-white">
+                    {activity.user.name}
+                  </span>{" "}
+                  {activity.details?.description}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="text-sm text-slate-400 text-center py-4">
+            No maintenance activities recorded
+          </p>
+        )}
       </div>
     </div>
   );

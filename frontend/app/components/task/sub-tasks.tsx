@@ -57,8 +57,8 @@ export const SubTasksDetails = ({
 
   return (
     <div className="mb-6">
-      <h3 className="text-sm font-medium text-muted-foreground mb-0">
-        Sub Tasks
+      <h3 className="text-sm font-medium text-slate-200 mb-0">
+        Maintenance Sub-Tasks
       </h3>
 
       <div className="space-y-2 mb-4">
@@ -72,37 +72,40 @@ export const SubTasksDetails = ({
                   handleToggleTask(subTask._id, !!checked)
                 }
                 disabled={isUpdating}
+                className="data-[state=checked]:bg-blue-600 border-slate-500"
               />
 
               <label
                 className={cn(
-                  "text-sm",
-                  subTask.completed ? "line-through text-muted-foreground" : ""
+                  "text-sm text-white cursor-pointer",
+                  subTask.completed ? "line-through text-slate-400" : ""
                 )}
+                htmlFor={subTask._id}
               >
                 {subTask.title}
               </label>
             </div>
           ))
         ) : (
-          <div className="text-sm text-muted-foreground">No sub tasks</div>
+          <div className="text-sm text-slate-400">No maintenance sub-tasks</div>
         )}
       </div>
 
-      <div className="flex ">
+      <div className="flex gap-2">
         <Input
-          placeholder="Add a sub task"
+          placeholder="Add maintenance checklist item..."
           value={newSubTask}
           onChange={(e) => setNewSubTask(e.target.value)}
-          className="mr-1"
+          className="flex-1 bg-slate-700/50 border-slate-600/50 text-white placeholder:text-slate-400 focus:border-blue-500/50"
           disabled={isPending}
         />
 
         <Button
           onClick={handleAddSubTask}
           disabled={isPending || newSubTask.length === 0}
+          className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white border-0"
         >
-          Add
+          {isPending ? "Adding..." : "Add"}
         </Button>
       </div>
     </div>

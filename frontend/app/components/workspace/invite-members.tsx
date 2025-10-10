@@ -77,9 +77,9 @@ export const InviteMemberDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="bg-slate-800/95 backdrop-blur-md border-slate-700/50">
         <DialogHeader>
-          <DialogTitle>Invite to Workspace</DialogTitle>
+          <DialogTitle className="text-white">Invite Team Members</DialogTitle>
         </DialogHeader>
 
         <Tabs
@@ -87,11 +87,19 @@ export const InviteMemberDialog = ({
           value={inviteTab}
           onValueChange={setInviteTab}
         >
-          <TabsList>
-            <TabsTrigger value="email" disabled={isPending}>
+          <TabsList className="bg-slate-700/50 border-slate-600/50">
+            <TabsTrigger
+              value="email"
+              disabled={isPending}
+              className="text-slate-300 data-[state=active]:bg-slate-600 data-[state=active]:text-white"
+            >
               Send Email
             </TabsTrigger>
-            <TabsTrigger value="link" disabled={isPending}>
+            <TabsTrigger
+              value="link"
+              disabled={isPending}
+              className="text-slate-300 data-[state=active]:bg-slate-600 data-[state=active]:text-white"
+            >
               Share Link
             </TabsTrigger>
           </TabsList>
@@ -107,9 +115,15 @@ export const InviteMemberDialog = ({
                         name="email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Email Address</FormLabel>
+                            <FormLabel className="text-slate-200">
+                              Technician Email Address
+                            </FormLabel>
                             <FormControl>
-                              <Input {...field} placeholder="Enter email" />
+                              <Input
+                                {...field}
+                                placeholder="technician@company.com"
+                                className="bg-slate-700/50 border-slate-600/50 text-white placeholder:text-slate-400 focus:border-blue-500/50"
+                              />
                             </FormControl>
                           </FormItem>
                         )}
@@ -120,13 +134,15 @@ export const InviteMemberDialog = ({
                         name="role"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Select Role</FormLabel>
+                            <FormLabel className="text-slate-200">
+                              Access Level
+                            </FormLabel>
                             <FormControl>
                               <div className="flex gap-3 flex-wrap">
                                 {ROLES.map((role) => (
                                   <label
                                     key={role}
-                                    className="flex items-center cursor-pointer gap-2"
+                                    className="flex items-center cursor-pointer gap-2 text-slate-200"
                                   >
                                     <input
                                       type="radio"
@@ -137,16 +153,22 @@ export const InviteMemberDialog = ({
                                     />
                                     <span
                                       className={cn(
-                                        "w-7 h-7 rounded-full  border-2 border-blue-300 flex items-center justify-center transition-all duration-300 hover:shadow-lg bg-blue-900 text-white",
+                                        "w-7 h-7 rounded-full border-2 border-slate-500 flex items-center justify-center transition-all duration-300 hover:shadow-lg bg-slate-700/50",
                                         field.value === role &&
-                                          "ring-2 ring-blue-500 ring-offset-2 "
+                                          "ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-800 border-blue-500 bg-blue-600/50"
                                       )}
                                     >
                                       {field.value === role && (
                                         <span className="w-3 h-3 rounded-full bg-white" />
                                       )}
                                     </span>
-                                    <span className="capitalize">{role}</span>
+                                    <span className="capitalize">
+                                      {role === "admin"
+                                        ? "Supervisor"
+                                        : role === "member"
+                                          ? "Technician"
+                                          : "Observer"}
+                                    </span>
                                   </label>
                                 ))}
                               </div>
@@ -157,12 +179,12 @@ export const InviteMemberDialog = ({
                     </div>
 
                     <Button
-                      className="mt-6 w-full"
+                      className="mt-6 w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white border-0"
                       size={"lg"}
                       disabled={isPending}
                     >
                       <Mail className="w-4 h-4 mr-2" />
-                      Send
+                      {isPending ? "Sending Invite..." : "Send Team Invite"}
                     </Button>
                   </form>
                 </Form>
@@ -173,13 +195,20 @@ export const InviteMemberDialog = ({
           <TabsContent value="link">
             <div className="grid gap-4">
               <div className="grid gap-2">
-                <Label>Share this link to invite people</Label>
+                <Label className="text-slate-200">
+                  Share this link to invite team members
+                </Label>
                 <div className="flex items-center space-x-2">
                   <Input
                     readOnly
                     value={`${window.location.origin}/workspace-invite/${workspaceId}`}
+                    className="bg-slate-700/50 border-slate-600/50 text-white"
                   />
-                  <Button onClick={handleCopyInviteLink} disabled={isPending}>
+                  <Button
+                    onClick={handleCopyInviteLink}
+                    disabled={isPending}
+                    className="bg-slate-600/50 hover:bg-slate-500/50 text-white border-slate-500"
+                  >
                     {linkCopied ? (
                       <>
                         <Check className="mr-2 h-4 w-4" />
@@ -194,8 +223,9 @@ export const InviteMemberDialog = ({
                   </Button>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Anyone with the link can join this workspace
+              <p className="text-sm text-slate-400">
+                Anyone with this link can join the maintenance workspace as a
+                team member
               </p>
             </div>
           </TabsContent>

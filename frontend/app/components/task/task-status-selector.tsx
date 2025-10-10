@@ -35,14 +35,26 @@ export const TaskStatusSelector = ({
   };
   return (
     <Select value={status || ""} onValueChange={handleStatusChange}>
-      <SelectTrigger className="w-[180px]" disabled={isPending}>
-        <SelectValue placeholder="Status" />
+      <SelectTrigger
+        className="w-[180px] bg-slate-700/50 border-slate-600/50 text-white"
+        disabled={isPending}
+      >
+        <SelectValue placeholder="Select status" />
       </SelectTrigger>
 
-      <SelectContent>
-        <SelectItem value="To Do">To Do</SelectItem>
-        <SelectItem value="In Progress">In Progress</SelectItem>
-        <SelectItem value="Done">Done</SelectItem>
+      <SelectContent className="bg-slate-800 border-slate-700">
+        <SelectItem value="To Do" className="text-white hover:bg-slate-700">
+          Scheduled
+        </SelectItem>
+        <SelectItem
+          value="In Progress"
+          className="text-white hover:bg-slate-700"
+        >
+          In Progress
+        </SelectItem>
+        <SelectItem value="Done" className="text-white hover:bg-slate-700">
+          Completed
+        </SelectItem>
       </SelectContent>
     </Select>
   );
