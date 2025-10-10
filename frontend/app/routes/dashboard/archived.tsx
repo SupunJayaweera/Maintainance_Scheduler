@@ -183,7 +183,7 @@ const ArchivedWorkspaceCard = ({
           <div className="text-sm text-muted-foreground">
             Manage archived workspace
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 m-2">
             <Button
               variant="outline"
               size="sm"
@@ -248,7 +248,7 @@ const ArchivedProjectCard = ({
           <div className="text-sm text-muted-foreground">
             Manage archived project
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 m-2">
             <Button
               variant="outline"
               size="sm"
