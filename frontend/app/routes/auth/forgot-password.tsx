@@ -12,13 +12,18 @@ import { Input } from "@/components/ui/input";
 import { useForgotPasswordMutation } from "@/hooks/use-auth";
 import { forgotPasswordSchema } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, CircleCheck, Loader2 } from "lucide-react";
+import {
+  ArrowLeft,
+  CircleCheck,
+  Loader2,
+  Settings,
+  RotateCcw,
+} from "lucide-react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useSearchParams } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
-import { is } from "zod/v4/locales";
 
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
@@ -56,49 +61,81 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center p-4">
+      {/* Industrial Logo Section */}
+      <div className="mb-8 text-center">
+        <div className="flex items-center justify-center mb-4">
+          <div className="bg-gradient-to-r from-blue-500 to-cyan-500 p-3 rounded-lg">
+            <Settings className="h-8 w-8 text-white" />
+          </div>
+        </div>
+        <h1 className="text-2xl font-bold text-white mb-2">MaintenancePro</h1>
+        <p className="text-slate-400 text-sm">
+          Industrial Maintenance Management System
+        </p>
+      </div>
+
       <div className="w-full max-w-md space-y-6">
-        <div className="flex flex-col items-center justify-center space-y-2">
-          <h1 className="text-2xl font-bold">Forgot Password</h1>
-          <p className="text-muted-foreground">
-            Enter your email address to reset your password.
+        <div className="text-center space-y-2">
+          <div className="flex items-center justify-center mb-2">
+            <RotateCcw className="h-6 w-6 text-blue-400 mr-2" />
+            <h2 className="text-2xl font-bold text-white">Reset Password</h2>
+          </div>
+          <p className="text-slate-400">
+            Enter your email address to reset your password
           </p>
         </div>
-        <Card>
-          <CardHeader>
-            <Link to="/sign-in" className="flex items-center gap-2">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+
+        <Card className="shadow-2xl border-slate-700/50 bg-slate-800/90 backdrop-blur-sm">
+          <CardHeader className="pb-4">
+            <Link
+              to="/sign-in"
+              className="flex items-center gap-2 text-slate-400 hover:text-blue-400 transition-colors duration-200 group"
+            >
+              <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-200" />
               <span>Back to Sign In</span>
             </Link>
           </CardHeader>
           <CardContent>
             {isSuccess ? (
-              <div className="flex flex-col items-center justify-center">
-                <CircleCheck className="h-10 w-10 text-green-500 mb-2" />
-                <h1 className="text-2xl font-bold">
-                  Password reset link sent!
-                </h1>
-                <p className="text-muted-foreground ">
-                  {" "}
-                  Check your email for a link to reset your password.
+              <div className="flex flex-col items-center justify-center text-center space-y-4 py-8">
+                <div className="bg-green-500/20 p-4 rounded-full mb-4">
+                  <CircleCheck className="h-12 w-12 text-green-400" />
+                </div>
+                <h3 className="text-xl font-bold text-white">
+                  Reset Link Sent!
+                </h3>
+                <p className="text-slate-400 max-w-sm">
+                  Check your email for instructions to reset your password. The
+                  link will expire in 15 minutes.
                 </p>
+                <div className="pt-4 border-t border-slate-700/50 w-full">
+                  <p className="text-xs text-slate-500">
+                    Secure password recovery for industrial systems
+                  </p>
+                </div>
               </div>
             ) : (
               <>
                 <Form {...form}>
                   <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-4"
+                    className="space-y-6"
                   >
                     <FormField
                       name="email"
                       control={form.control}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email Address</FormLabel>
-
+                          <FormLabel className="text-slate-200 font-medium">
+                            Email Address
+                          </FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your email" {...field} />
+                            <Input
+                              placeholder="Enter your work email"
+                              className="bg-slate-700/50 border-slate-600/50 text-white placeholder:text-slate-400 focus:border-blue-500/50 focus:ring-blue-500/20"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -106,17 +143,26 @@ const ForgotPassword = () => {
                     />
                     <Button
                       type="submit"
-                      className="w-full"
+                      className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-medium py-2.5 rounded-lg transition-all duration-200 shadow-lg hover:shadow-blue-500/25"
                       disabled={isPending}
                     >
                       {isPending ? (
-                        <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                        <>
+                          <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                          Sending Reset Link...
+                        </>
                       ) : (
                         "Send Reset Link"
                       )}
                     </Button>
                   </form>
                 </Form>
+
+                <div className="pt-6 mt-6 border-t border-slate-700/50 text-center">
+                  <p className="text-xs text-slate-500">
+                    Secure password recovery for industrial maintenance systems
+                  </p>
+                </div>
               </>
             )}
           </CardContent>

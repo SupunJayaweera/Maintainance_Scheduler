@@ -152,10 +152,10 @@ export const Header = ({
             size="icon"
             className="text-slate-400 hover:text-white hover:bg-slate-800/50 relative"
           >
-            <Bell className="h-5 w-5" />
+            {/* <Bell className="h-5 w-5" />
             <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center font-medium">
               3
-            </span>
+            </span> */}
           </Button>
 
           {/* User Menu */}

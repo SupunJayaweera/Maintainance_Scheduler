@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router";
 import { useLoginMutation } from "@/hooks/use-auth";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Settings, Shield, User } from "lucide-react";
 import { useAuth } from "@/provider/auth-context";
 
 type SignInFormData = z.infer<typeof signInSchema>;
@@ -64,12 +64,26 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-muted/40 p-4">
-      <Card className="max-w-md w-full shadow-xl">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
+      {/* Logo Section */}
+      <div className="flex items-center gap-3 mb-8">
+        <div className="bg-gradient-to-r from-blue-500 to-cyan-500 p-3 rounded-lg">
+          <Settings className="h-8 w-8 text-white" />
+        </div>
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-white">MaintenancePro</h1>
+          <p className="text-slate-400 text-sm">Industrial IoT Platform</p>
+        </div>
+      </div>
+
+      <Card className="max-w-md w-full bg-slate-800/50 backdrop-blur-md border-slate-700/50 shadow-2xl">
         <CardHeader className="text-center mb-5">
-          <CardTitle className="text-2xl font-bold">Welcome Back!</CardTitle>
-          <CardDescription className="text-sm text-muted-foreground">
-            Sign in to your account to continue...
+          <CardTitle className="text-2xl font-bold text-white flex items-center justify-center gap-2">
+            <Shield className="h-6 w-6 text-blue-400" />
+            Welcome Back!
+          </CardTitle>
+          <CardDescription className="text-slate-300">
+            Sign in to access your industrial maintenance dashboard
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -83,11 +97,12 @@ const SignIn = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email Address</FormLabel>
+                    <FormLabel className="text-white">Email Address</FormLabel>
                     <FormControl>
                       <Input
                         type="email"
                         placeholder="Enter your email"
+                        className="bg-slate-700/50 border-slate-600/50 text-white placeholder:text-slate-400 focus:border-blue-500/50"
                         {...field}
                       />
                     </FormControl>
@@ -101,10 +116,10 @@ const SignIn = () => {
                 render={({ field }) => (
                   <FormItem>
                     <div className="flex items-center justify-between">
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel className="text-white">Password</FormLabel>
                       <Link
                         to="/forgot-password"
-                        className="text-sm text-blue-500 hover:underline"
+                        className="text-sm text-blue-400 hover:text-blue-300 hover:underline"
                       >
                         Forgot Password?
                       </Link>
@@ -112,7 +127,8 @@ const SignIn = () => {
                     <FormControl>
                       <Input
                         type="password"
-                        placeholder="********"
+                        placeholder="Enter your password"
+                        className="bg-slate-700/50 border-slate-600/50 text-white placeholder:text-slate-400 focus:border-blue-500/50"
                         {...field}
                       />
                     </FormControl>
@@ -120,17 +136,41 @@ const SignIn = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full " disabled={isPending}>
-                {isPending ? <Loader2 className="w-4 h-4 mr-2" /> : "Sign In"}
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-medium"
+                disabled={isPending}
+              >
+                {isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Signing In...
+                  </>
+                ) : (
+                  <>
+                    <User className="w-4 h-4 mr-2" />
+                    Sign In
+                  </>
+                )}
               </Button>
             </form>
           </Form>
-          <CardFooter>
-            <div className="text-sm text-muted-foreground mt-4">
-              Don't have an account?{" "}
-              <Link to="/sign-up" className="text-blue-500 hover:underline">
-                Sign Up
-              </Link>
+          <CardFooter className="pt-6">
+            <div className="text-center w-full">
+              <div className="text-sm text-slate-400 mb-4">
+                Don't have an account?{" "}
+                <Link
+                  to="/sign-up"
+                  className="text-blue-400 hover:text-blue-300 hover:underline font-medium"
+                >
+                  Sign Up
+                </Link>
+              </div>
+              <div className="border-t border-slate-700/50 pt-4">
+                <p className="text-xs text-slate-500">
+                  Secure access to industrial maintenance systems
+                </p>
+              </div>
             </div>
           </CardFooter>
         </CardContent>

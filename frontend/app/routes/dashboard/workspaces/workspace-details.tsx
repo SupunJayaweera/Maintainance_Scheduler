@@ -1,9 +1,11 @@
-import { Loader } from "@/components/loader";
 import CreateProjectDialog from "@/components/project/create-project";
 import { InviteMemberDialog } from "@/components/workspace/invite-members";
 import { ProjectList } from "@/components/workspace/project-list";
-
 import { WorkspaceHeader } from "@/components/workspace/workspace-header";
+import {
+  IndustrialPageLayout,
+  IndustrialLoading,
+} from "@/components/layout/industrial-page-layout";
 import {
   useGetWorkspaceQuery,
   useArchiveWorkspaceMutation,
@@ -14,6 +16,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { Building } from "lucide-react";
 
 const WorkspaceDetails = () => {
   const { workspaceId } = useParams<{ workspaceId: string }>();
@@ -40,22 +43,40 @@ const WorkspaceDetails = () => {
   // console.log("Query state:", { data, isLoading, error });
 
   if (isLoading) {
-    return (
-      <div>
-        <Loader />
-      </div>
-    );
+    return <IndustrialLoading message="Loading workspace details..." />;
   }
 
   if (error) {
     console.error("Workspace fetch error:", error);
     return (
-      <div>Error loading workspace: {error.message || "Unknown error"}</div>
+      <IndustrialPageLayout
+        title="Error"
+        subtitle="Failed to load workspace"
+        icon={Building}
+      >
+        <div className="text-center py-8">
+          <p className="text-slate-400">
+            Error loading workspace: {error.message || "Unknown error"}
+          </p>
+        </div>
+      </IndustrialPageLayout>
     );
   }
 
   if (!data?.workspace) {
-    return <div>Workspace not found</div>;
+    return (
+      <IndustrialPageLayout
+        title="Not Found"
+        subtitle="Workspace not found"
+        icon={Building}
+      >
+        <div className="text-center py-8">
+          <p className="text-slate-400">
+            The requested workspace could not be found.
+          </p>
+        </div>
+      </IndustrialPageLayout>
+    );
   }
 
   console.log("check", data);
@@ -85,34 +106,40 @@ const WorkspaceDetails = () => {
   };
 
   return (
-    <div className="space-y-8">
-      <WorkspaceHeader
-        workspace={data.workspace}
-        members={data.workspace?.members}
-        onCreateProject={() => setIsCreateProject(true)}
-        onInviteMember={() => setIsInviteMember(true)}
-        onArchiveWorkspace={handleArchiveWorkspace}
-      />
+    <IndustrialPageLayout
+      title={data.workspace.name}
+      subtitle="Workspace Overview"
+      icon={Building}
+    >
+      <div className="space-y-6">
+        <WorkspaceHeader
+          workspace={data.workspace}
+          members={data.workspace?.members}
+          onCreateProject={() => setIsCreateProject(true)}
+          onInviteMember={() => setIsInviteMember(true)}
+          onArchiveWorkspace={handleArchiveWorkspace}
+        />
 
-      <ProjectList
-        workspaceId={workspaceId}
-        projects={data.projects || []}
-        onCreateProject={() => setIsCreateProject(true)}
-      />
+        <ProjectList
+          workspaceId={workspaceId}
+          projects={data.projects || []}
+          onCreateProject={() => setIsCreateProject(true)}
+        />
 
-      <CreateProjectDialog
-        isOpen={isCreateProject}
-        onOpenChange={setIsCreateProject}
-        workspaceId={workspaceId}
-        workspaceMembers={data.workspace.members as any}
-      />
+        <CreateProjectDialog
+          isOpen={isCreateProject}
+          onOpenChange={setIsCreateProject}
+          workspaceId={workspaceId}
+          workspaceMembers={data.workspace.members as any}
+        />
 
-      <InviteMemberDialog
-        isOpen={isInviteMember}
-        onOpenChange={setIsInviteMember}
-        workspaceId={workspaceId}
-      />
-    </div>
+        <InviteMemberDialog
+          isOpen={isInviteMember}
+          onOpenChange={setIsInviteMember}
+          workspaceId={workspaceId}
+        />
+      </div>
+    </IndustrialPageLayout>
   );
 };
 
