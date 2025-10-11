@@ -142,8 +142,8 @@ const WorkspaceAnalytics = () => {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-          <p>Loading sensor data...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400 mx-auto mb-2"></div>
+          <p className="text-slate-300">Loading sensor data...</p>
         </div>
       </div>
     );
@@ -158,18 +158,21 @@ const WorkspaceAnalytics = () => {
             variant="outline"
             size="sm"
             onClick={() => navigate(`/workspaces/${workspaceId}`)}
+            className="bg-slate-800/50 border-slate-700/50 text-slate-200 hover:bg-slate-700/50 hover:text-white"
           >
             <ArrowLeft className="size-4 mr-2" />
             Back to Workspace
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">Real-time Analytics</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl font-bold text-white">
+              Real-time Analytics
+            </h1>
+            <p className="text-slate-400">
               Live sensor data monitoring
               <span
-                className={`ml-2 inline-block w-2 h-2 rounded-full ${isConnected ? "bg-green-500" : "bg-red-500"}`}
+                className={`ml-2 inline-block w-2 h-2 rounded-full ${isConnected ? "bg-green-400" : "bg-red-400"}`}
               ></span>
-              <span className="ml-1 text-sm">
+              <span className="ml-1 text-sm text-slate-300">
                 {latestSensorReading?.status === "offline"
                   ? `Sensors Offline ${latestSensorReading.lastSeen ? `(Last seen: ${formatTime(latestSensorReading.lastSeen)})` : ""}`
                   : isConnected
@@ -187,16 +190,18 @@ const WorkspaceAnalytics = () => {
       {/* Current Status Cards */}
       {latestSensorReading && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card>
+          <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Current</CardTitle>
-              <Zap className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-slate-200">
+                Current
+              </CardTitle>
+              <Zap className="h-4 w-4 text-slate-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold text-white">
                 {latestSensorReading.current.toFixed(2)} A
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-slate-400">
                 {latestSensorReading.status === "offline"
                   ? "Sensors offline"
                   : "Real-time current measurement"}
@@ -204,13 +209,15 @@ const WorkspaceAnalytics = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Vibration</CardTitle>
-              <Vibrate className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-slate-200">
+                Vibration
+              </CardTitle>
+              <Vibrate className="h-4 w-4 text-slate-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold text-white">
                 {Math.sqrt(
                   latestSensorReading.vibrationX ** 2 +
                     latestSensorReading.vibrationY ** 2 +
@@ -218,7 +225,7 @@ const WorkspaceAnalytics = () => {
                 ).toFixed(2)}{" "}
                 g
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-slate-400">
                 {latestSensorReading.status === "offline"
                   ? "Sensors offline"
                   : "Combined acceleration magnitude"}
@@ -226,18 +233,18 @@ const WorkspaceAnalytics = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-sm font-medium text-slate-200">
                 Temperature A
               </CardTitle>
-              <Thermometer className="h-4 w-4 text-muted-foreground" />
+              <Thermometer className="h-4 w-4 text-slate-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold text-white">
                 {latestSensorReading.temperatureA.toFixed(1)}°C
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-slate-400">
                 {latestSensorReading.status === "offline"
                   ? "Sensors offline"
                   : "Primary temperature sensor"}
@@ -245,18 +252,18 @@ const WorkspaceAnalytics = () => {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-sm font-medium text-slate-200">
                 Temperature B
               </CardTitle>
-              <Thermometer className="h-4 w-4 text-muted-foreground" />
+              <Thermometer className="h-4 w-4 text-slate-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold text-white">
                 {latestSensorReading.temperatureB.toFixed(1)}°C
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-slate-400">
                 {latestSensorReading.status === "offline"
                   ? "Sensors offline"
                   : "Secondary temperature sensor"}
@@ -269,13 +276,13 @@ const WorkspaceAnalytics = () => {
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Current Chart */}
-        <Card>
+        <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-slate-200">
               <Zap className="h-5 w-5" />
               Current Measurement
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-slate-400">
               Real-time current readings in Amperes
             </CardDescription>
           </CardHeader>
@@ -313,13 +320,13 @@ const WorkspaceAnalytics = () => {
         </Card>
 
         {/* Vibration Chart */}
-        <Card>
+        <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-slate-200">
               <Vibrate className="h-5 w-5" />
               Vibration (ADXL345)
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-slate-400">
               3-axis acceleration data in g-force
             </CardDescription>
           </CardHeader>
@@ -381,13 +388,13 @@ const WorkspaceAnalytics = () => {
         </Card>
 
         {/* Temperature Chart */}
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-slate-200">
               <Thermometer className="h-5 w-5" />
               Temperature Sensors
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-slate-400">
               Temperature readings from sensors A and B in Celsius
             </CardDescription>
           </CardHeader>
@@ -439,23 +446,23 @@ const WorkspaceAnalytics = () => {
 
       {!isConnected && (
         <Card
-          className={`border-yellow-200 ${latestSensorReading?.status === "offline" ? "bg-red-50 border-red-200" : "bg-yellow-50"}`}
+          className={`bg-slate-800/50 backdrop-blur-sm ${latestSensorReading?.status === "offline" ? "border-red-500/50" : "border-yellow-500/50"}`}
         >
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
               <Activity
-                className={`h-5 w-5 ${latestSensorReading?.status === "offline" ? "text-red-600" : "text-yellow-600"}`}
+                className={`h-5 w-5 ${latestSensorReading?.status === "offline" ? "text-red-400" : "text-yellow-400"}`}
               />
               <div>
                 <h3
-                  className={`font-medium ${latestSensorReading?.status === "offline" ? "text-red-800" : "text-yellow-800"}`}
+                  className={`font-medium ${latestSensorReading?.status === "offline" ? "text-red-300" : "text-yellow-300"}`}
                 >
                   {latestSensorReading?.status === "offline"
                     ? "Sensors Offline"
                     : "Connection Issue"}
                 </h3>
                 <p
-                  className={`text-sm ${latestSensorReading?.status === "offline" ? "text-red-700" : "text-yellow-700"}`}
+                  className={`text-sm ${latestSensorReading?.status === "offline" ? "text-red-200" : "text-yellow-200"}`}
                 >
                   {latestSensorReading?.status === "offline"
                     ? `Sensors have been offline for more than 1 minute. ${latestSensorReading.lastSeen ? `Last seen: ${formatTime(latestSensorReading.lastSeen)}` : ""}`

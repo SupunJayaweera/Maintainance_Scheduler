@@ -91,40 +91,42 @@ export const StatisticsCharts = ({
       </Card> */}
 
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div className="space-y-0.5">
-              <CardTitle className="text-base font-medium">
+              <CardTitle className="text-base font-medium text-slate-200">
                 Task Trends
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-slate-400">
                 Weekly task creation over the last 30 days
               </CardDescription>
             </div>
-            <ChartLine className="size-5 text-muted-foreground" />
+            <ChartLine className="size-5 text-slate-400" />
           </CardHeader>
           <CardContent className="w-full overflow-x-auto md:overflow-x-hidden">
-            <div className="mb-4 p-3 bg-muted/50 rounded-lg text-sm">
-              <h4 className="font-medium mb-2">Chart Explanation:</h4>
-              <ul className="space-y-1 text-muted-foreground">
+            <div className="mb-4 p-3 bg-slate-700/50 rounded-lg text-sm border border-slate-600/50">
+              <h4 className="font-medium mb-2 text-slate-200">
+                Chart Explanation:
+              </h4>
+              <ul className="space-y-1 text-slate-400">
                 <li>
-                  • <strong>Week 4 (Oldest):</strong> Tasks created in days 1-7
-                  of the last 30 days
+                  • <strong className="text-slate-300">Week 4 (Oldest):</strong>{" "}
+                  Tasks created in days 1-7 of the last 30 days
                 </li>
                 <li>
-                  • <strong>Week 3:</strong> Tasks created in days 8-14 of the
-                  last 30 days
+                  • <strong className="text-slate-300">Week 3:</strong> Tasks
+                  created in days 8-14 of the last 30 days
                 </li>
                 <li>
-                  • <strong>Week 2:</strong> Tasks created in days 15-21 of the
-                  last 30 days
+                  • <strong className="text-slate-300">Week 2:</strong> Tasks
+                  created in days 15-21 of the last 30 days
                 </li>
                 <li>
-                  • <strong>Week 1 (Latest):</strong> Tasks created in days
-                  22-30 of the last 30 days
+                  • <strong className="text-slate-300">Week 1 (Latest):</strong>{" "}
+                  Tasks created in days 22-30 of the last 30 days
                 </li>
               </ul>
-              <p className="mt-2 text-xs text-muted-foreground">
+              <p className="mt-2 text-xs text-slate-400">
                 Tasks are grouped by their creation date, showing how many tasks
                 of each status were created in each week.
               </p>
@@ -173,10 +175,10 @@ export const StatisticsCharts = ({
                       if (active && payload && payload.length) {
                         const data = payload[0].payload;
                         return (
-                          <div className="bg-background border rounded-lg shadow-lg p-3">
-                            <h4 className="font-medium">{label}</h4>
+                          <div className="bg-slate-800 border border-slate-600 rounded-lg shadow-lg p-3">
+                            <h4 className="font-medium text-white">{label}</h4>
                             {data.period && (
-                              <p className="text-sm text-muted-foreground mb-2">
+                              <p className="text-sm text-slate-300 mb-2">
                                 Period: {data.period}
                               </p>
                             )}
@@ -189,7 +191,7 @@ export const StatisticsCharts = ({
                                   className="w-3 h-3 rounded-full"
                                   style={{ backgroundColor: entry.color }}
                                 />
-                                <span className="text-sm">
+                                <span className="text-sm text-slate-200">
                                   {entry.name}: {entry.value} tasks
                                 </span>
                               </div>
@@ -235,15 +237,17 @@ export const StatisticsCharts = ({
 
         {/* project status  */}
 
-        <Card>
+        <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div className="space-y-0.5">
-              <CardTitle className="text-base font-medium">
+              <CardTitle className="text-base font-medium text-slate-200">
                 Job Status
               </CardTitle>
-              <CardDescription>Job status breakdown</CardDescription>
+              <CardDescription className="text-slate-400">
+                Job status breakdown
+              </CardDescription>
             </div>
-            <ChartPie className="size-5 text-muted-foreground" />
+            <ChartPie className="size-5 text-slate-400" />
           </CardHeader>
 
           <CardContent className="p-6">
@@ -300,15 +304,17 @@ export const StatisticsCharts = ({
                         total > 0 ? ((value / total) * 100).toFixed(0) : "0";
 
                       return (
-                        <div className="bg-background border rounded-lg shadow-lg p-3">
+                        <div className="bg-slate-800 border border-slate-600 rounded-lg shadow-lg p-3">
                           <div className="flex items-center gap-2">
                             <div
                               className="w-3 h-3 rounded-full"
                               style={{ backgroundColor: data?.color }}
                             />
-                            <span className="font-medium">{name}</span>
+                            <span className="font-medium text-white">
+                              {name}
+                            </span>
                           </div>
-                          <p className="text-sm text-muted-foreground mt-1">
+                          <p className="text-sm text-slate-300 mt-1">
                             {value} projects ({percentage}%)
                           </p>
                         </div>
@@ -330,15 +336,17 @@ export const StatisticsCharts = ({
         </Card>
 
         {/* task priority  */}
-        <Card>
+        <Card className="bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div className="space-y-0.5">
-              <CardTitle className="text-base font-medium">
+              <CardTitle className="text-base font-medium text-slate-200">
                 Task Priority
               </CardTitle>
-              <CardDescription>Task priority breakdown</CardDescription>
+              <CardDescription className="text-slate-400">
+                Task priority breakdown
+              </CardDescription>
             </div>
-            <ChartPie className="size-5 text-muted-foreground" />
+            <ChartPie className="size-5 text-slate-400" />
           </CardHeader>
 
           <CardContent className="p-6">
@@ -395,15 +403,17 @@ export const StatisticsCharts = ({
                         total > 0 ? ((value / total) * 100).toFixed(0) : "0";
 
                       return (
-                        <div className="bg-background border rounded-lg shadow-lg p-3">
+                        <div className="bg-slate-800 border border-slate-600 rounded-lg shadow-lg p-3">
                           <div className="flex items-center gap-2">
                             <div
                               className="w-3 h-3 rounded-full"
                               style={{ backgroundColor: data?.color }}
                             />
-                            <span className="font-medium">{name} Priority</span>
+                            <span className="font-medium text-white">
+                              {name} Priority
+                            </span>
                           </div>
-                          <p className="text-sm text-muted-foreground mt-1">
+                          <p className="text-sm text-slate-300 mt-1">
                             {value} tasks ({percentage}%)
                           </p>
                         </div>
@@ -425,15 +435,17 @@ export const StatisticsCharts = ({
         </Card>
 
         {/* Workspace Productivity Chart */}
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div className="space-y-0.5">
-              <CardTitle className="text-base font-medium">
+              <CardTitle className="text-base font-medium text-slate-200">
                 Workspace Productivity
               </CardTitle>
-              <CardDescription>Task completion by project</CardDescription>
+              <CardDescription className="text-slate-400">
+                Task completion by project
+              </CardDescription>
             </div>
-            <ChartBarBig className="h-5 w-5 text-muted-foreground" />
+            <ChartBarBig className="h-5 w-5 text-slate-400" />
           </CardHeader>
           <CardContent className="w-full overflow-x-auto md:overflow-x-hidden">
             <div className="min-w-[350px]">

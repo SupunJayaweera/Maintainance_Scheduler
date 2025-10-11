@@ -10,14 +10,14 @@ export const RecentProjects = ({ data }: { data: Project[] }) => {
   const workspaceId = searchParams.get("workspaceId");
 
   return (
-    <Card className="lg:col-spa-2">
+    <Card className="lg:col-spa-2 bg-slate-800/50 border-slate-700/50 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle>Recent Projects</CardTitle>
+        <CardTitle className="text-slate-200">Recent Projects</CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-4">
         {data.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8">
+          <p className="text-center text-slate-400 py-8">
             No Recent project yet
           </p>
         ) : (
@@ -25,12 +25,15 @@ export const RecentProjects = ({ data }: { data: Project[] }) => {
             const projectProgress = getProjectProgress(project.tasks);
 
             return (
-              <div key={project._id} className="border rounded-lg p-4">
+              <div
+                key={project._id}
+                className="border border-slate-600/50 rounded-lg p-4 bg-slate-700/30"
+              >
                 <div className="flex items-center justify-between mb-2">
                   <Link
                     to={`/workspaces${workspaceId}/projects/${project._id}`}
                   >
-                    <h3 className="font-medium hover:text-primary transition-colors">
+                    <h3 className="font-medium text-slate-200 hover:text-cyan-400 transition-colors">
                       {project.title}
                     </h3>
                   </Link>
@@ -44,13 +47,13 @@ export const RecentProjects = ({ data }: { data: Project[] }) => {
                     {project.status}
                   </span>
                 </div>
-                <p className="text-sm text-muted-foreground mb-3 line-clamp-3">
+                <p className="text-sm text-slate-400 mb-3 line-clamp-3">
                   {project.description}
                 </p>
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-xs">
-                    <span>Progress</span>
-                    <span>{projectProgress}%</span>
+                    <span className="text-slate-300">Progress</span>
+                    <span className="text-slate-300">{projectProgress}%</span>
                   </div>
 
                   <Progress value={projectProgress} className="h-2" />
