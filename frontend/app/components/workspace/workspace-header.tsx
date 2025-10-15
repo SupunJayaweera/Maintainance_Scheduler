@@ -77,7 +77,7 @@ export const WorkspaceHeader = ({
             <Button
               variant="outline"
               onClick={onInviteMember}
-              className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
+              className="bg-slate-700/50 text-slate-300 hover:bg-slate-600 hover:text-white border-slate-600"
             >
               <UserPlus className="size-4 mr-2" />
               Invite Member

@@ -56,7 +56,10 @@ export const RecentProjects = ({ data }: { data: Project[] }) => {
                     <span className="text-slate-300">{projectProgress}%</span>
                   </div>
 
-                  <Progress value={projectProgress} className="h-2" />
+                  <Progress
+                    value={projectProgress}
+                    className="h-2 bg-slate-600/50 [&>div]:bg-gradient-to-r [&>div]:from-cyan-400 [&>div]:to-blue-500"
+                  />
                 </div>
               </div>
             );

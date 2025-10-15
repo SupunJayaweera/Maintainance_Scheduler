@@ -152,13 +152,13 @@ export const StatisticsCharts = ({
                 <LineChart data={taskTrendsData}>
                   <XAxis
                     dataKey={"name"}
-                    stroke="#888888"
+                    stroke="#e2e8f0"
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
                   />
                   <YAxis
-                    stroke="#888888"
+                    stroke="#e2e8f0"
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
@@ -166,6 +166,7 @@ export const StatisticsCharts = ({
                       value: "Number of Tasks",
                       angle: -90,
                       position: "insideLeft",
+                      style: { textAnchor: "middle", fill: "#e2e8f0" },
                     }}
                   />
 
@@ -228,7 +229,13 @@ export const StatisticsCharts = ({
                     name="To Do Tasks"
                   />
 
-                  <ChartLegend content={<ChartLegendContent />} />
+                  <ChartLegend
+                    content={<ChartLegendContent />}
+                    wrapperStyle={{
+                      color: "#e2e8f0", // Light gray text color
+                      fontSize: "12px",
+                    }}
+                  />
                 </LineChart>
               </ChartContainer>
             </div>
@@ -255,15 +262,15 @@ export const StatisticsCharts = ({
               className="mx-auto aspect-square max-h-[250px]"
               config={{
                 Completed: {
-                  label: "Completed",
-                  color: "#10b981",
+                  label: "Finished Jobs",
+                  color: "#22c55e",
                 },
                 "In Progress": {
-                  label: "In Progress",
+                  label: "Active Jobs",
                   color: "#3b82f6",
                 },
                 Planning: {
-                  label: "Planning",
+                  label: "Scheduled Jobs",
                   color: "#f59e0b",
                 },
               }}
@@ -328,6 +335,7 @@ export const StatisticsCharts = ({
                   wrapperStyle={{
                     paddingTop: "20px",
                     fontSize: "12px",
+                    color: "#e2e8f0", // Light gray text color
                   }}
                 />
               </PieChart>
@@ -427,6 +435,7 @@ export const StatisticsCharts = ({
                   wrapperStyle={{
                     paddingTop: "20px",
                     fontSize: "12px",
+                    color: "#e2e8f0", // Light gray text color
                   }}
                 />
               </PieChart>
@@ -478,17 +487,41 @@ export const StatisticsCharts = ({
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Bar
                     dataKey="total"
-                    fill="#000"
+                    fill="#b3ffe6"
                     radius={[4, 4, 0, 0]}
                     name="Total Tasks"
+                    className="transition-colors duration-200 hover:opacity-80"
+                    onMouseEnter={(data, index, e) => {
+                      const target = e.target as SVGElement;
+                      target.style.fill = "#80ffcc"; // Darker green on hover
+                    }}
+                    onMouseLeave={(data, index, e) => {
+                      const target = e.target as SVGElement;
+                      target.style.fill = "#b3ffe6"; // Original color
+                    }}
                   />
                   <Bar
                     dataKey="completed"
                     fill="#3b82f6"
                     radius={[4, 4, 0, 0]}
                     name="Completed Tasks"
+                    className="transition-colors duration-200 hover:opacity-80"
+                    onMouseEnter={(data, index, e) => {
+                      const target = e.target as SVGElement;
+                      target.style.fill = "#1d4ed8"; // Darker blue on hover
+                    }}
+                    onMouseLeave={(data, index, e) => {
+                      const target = e.target as SVGElement;
+                      target.style.fill = "#3b82f6"; // Original color
+                    }}
                   />
-                  <ChartLegend content={<ChartLegendContent />} />
+                  <ChartLegend
+                    content={<ChartLegendContent />}
+                    wrapperStyle={{
+                      color: "#e2e8f0", // Light gray text color
+                      fontSize: "12px",
+                    }}
+                  />
                 </BarChart>
               </ChartContainer>
             </div>

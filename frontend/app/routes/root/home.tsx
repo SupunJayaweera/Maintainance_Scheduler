@@ -63,7 +63,7 @@ const HomePage = () => {
               <Link to="/sign-in">
                 <Button
                   variant="ghost"
-                  className="text-white hover:bg-white/10"
+                  className="text-white hover:bg-white/10 hover:text-blue-100"
                 >
                   Sign In
                 </Button>
