@@ -174,7 +174,7 @@ export const CreateWorkspace = ({
                 type="button"
                 variant="outline"
                 onClick={() => setIsCreatingWorkspace(false)}
-                className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
+                className="border-slate-600 text-slate-900 hover:bg-slate-700 hover:text-white"
               >
                 Cancel
               </Button>

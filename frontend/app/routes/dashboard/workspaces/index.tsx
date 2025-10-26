@@ -81,14 +81,18 @@ const Workspace = () => {
           ))}
           {workspaces?.length === 0 && (
             <div className="col-span-full">
-              <div className="bg-slate-800/50 backdrop-blur-md rounded-lg border border-slate-700/50 p-12 text-center">
-                <Building2 className="h-16 w-16 text-slate-400 mx-auto mb-4" />
-                <NoDataFound
-                  title="No Industrial Workspaces Found"
-                  description="Create your first workspace to start managing industrial maintenance operations."
-                  buttonText="Create Workspace"
-                  buttonAction={() => setIsCreatingWorkspace(true)}
-                />
+              <div className="bg-slate-800/50 backdrop-blur-md rounded-lg border border-slate-700/50 p-16 text-center">
+                <div className="flex items-center gap-3">
+                  <div className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-full p-6 w-24 h-24 mx-auto mb-6 flex items-center justify-center border border-blue-500/30">
+                    <Building2 className="h-24 w-24 text-blue-400" />
+                  </div>
+                  <NoDataFound
+                    title="No Industrial Workspaces Found"
+                    description="Create your first workspace to start managing industrial maintenance operations, track equipment, and coordinate with your team."
+                    buttonText="Create Workspace"
+                    buttonAction={() => setIsCreatingWorkspace(true)}
+                  />
+                </div>
               </div>
             </div>
           )}
