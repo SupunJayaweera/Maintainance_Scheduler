@@ -191,7 +191,7 @@ const Profile = () => {
                       type="button"
                       size="sm"
                       variant="outline"
-                      className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
+                      className="border-slate-900 text-slate-600 hover:bg-slate-700 hover:text-white"
                       onClick={() =>
                         document.getElementById("avatar-upload")?.click()
                       }
