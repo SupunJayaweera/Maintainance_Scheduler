@@ -32,11 +32,11 @@ const getSensorData = async (req, res) => {
           result.push({
             timestamp: o._time,
             current: o.current || 0,
-            vibrationX: o.vibration_x || 0,
-            vibrationY: o.vibration_y || 0,
-            vibrationZ: o.vibration_z || 0,
-            temperatureA: o.temperature_a || 0,
-            temperatureB: o.temperature_b || 0,
+            vibrationX: o.accX || 0,
+            vibrationY: o.accY || 0,
+            vibrationZ: o.accZ || 0,
+            temperatureA: o.tempA || 0,
+            temperatureB: o.tempB || 0,
           });
         },
         error(error) {
@@ -90,11 +90,11 @@ const getLatestSensorReading = async (req, res) => {
           result.push({
             timestamp: o._time,
             current: o.current || 0,
-            vibrationX: o.vibration_x || 0,
-            vibrationY: o.vibration_y || 0,
-            vibrationZ: o.vibration_z || 0,
-            temperatureA: o.temperature_a || 0,
-            temperatureB: o.temperature_b || 0,
+            vibrationX: o.accX || 0,
+            vibrationY: o.accY || 0,
+            vibrationZ: o.accZ || 0,
+            temperatureA: o.tempA || 0,
+            temperatureB: o.tempB || 0,
           });
         },
         error(error) {

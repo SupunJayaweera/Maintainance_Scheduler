@@ -85,11 +85,11 @@ function writeSensorData() {
       .tag("workspace_id", workspaceId)
       .tag("sensor_type", "industrial")
       .floatField("current", sensorData.current)
-      .floatField("vibration_x", sensorData.vibrationX)
-      .floatField("vibration_y", sensorData.vibrationY)
-      .floatField("vibration_z", sensorData.vibrationZ)
-      .floatField("temperature_a", sensorData.temperatureA)
-      .floatField("temperature_b", sensorData.temperatureB)
+      .floatField("accX", sensorData.vibrationX)
+      .floatField("accY", sensorData.vibrationY)
+      .floatField("accZ", sensorData.vibrationZ)
+      .floatField("tempA", sensorData.temperatureA)
+      .floatField("tempB", sensorData.temperatureB)
       .timestamp(new Date());
 
     writeClient.writePoint(point);
@@ -129,11 +129,11 @@ async function generateHistoricalData() {
         .tag("workspace_id", workspaceId)
         .tag("sensor_type", "industrial")
         .floatField("current", sensorData.current)
-        .floatField("vibration_x", sensorData.vibrationX)
-        .floatField("vibration_y", sensorData.vibrationY)
-        .floatField("vibration_z", sensorData.vibrationZ)
-        .floatField("temperature_a", sensorData.temperatureA)
-        .floatField("temperature_b", sensorData.temperatureB)
+        .floatField("accX", sensorData.vibrationX)
+        .floatField("accY", sensorData.vibrationY)
+        .floatField("accZ", sensorData.vibrationZ)
+        .floatField("tempA", sensorData.temperatureA)
+        .floatField("tempB", sensorData.temperatureB)
         .timestamp(time);
 
       writeClient.writePoint(point);
