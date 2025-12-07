@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router";
+import { useParams, useNavigate, Link } from "react-router";
 import {
   Card,
   CardContent,
@@ -181,6 +181,14 @@ const WorkspaceAnalytics = () => {
               </span>
             </p>
           </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="bg-slate-800/50 border-slate-700/50 text-slate-200 hover:bg-slate-700/50 hover:text-white"
+          >
+            <Link to="http://142.93.220.152:3000/">Real-Time Forecasting</Link>
+            {/* <ArrowLeft className="size-4 mr-2" /> */}
+          </Button>
         </div>
 
         {/* Notification Bell */}
