@@ -19,8 +19,7 @@ const getSensorData = async (req, res) => {
         |> filter(fn: (r) => r["_measurement"] == "sensor_data")
         |> filter(fn: (r) => r["workspace_id"] == "${workspaceId}")
         |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
-        |> sort(columns: ["_time"])
-        |> limit(n: 100)
+        |> sort(columns: ["_time"], desc: false)
     `;
 
     const result = [];

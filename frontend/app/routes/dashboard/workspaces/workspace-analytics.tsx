@@ -45,7 +45,7 @@ const WorkspaceAnalytics = () => {
   } = useLatestSensorDataQuery(workspaceId);
 
   // Dynamic time range based on sensor status
-  const timeRange = latestSensorReading?.status === "offline" ? "5m" : "30m";
+  const timeRange = latestSensorReading?.status === "offline" ? "5m" : "5m";
 
   const {
     data: sensorData = [],
@@ -59,12 +59,29 @@ const WorkspaceAnalytics = () => {
   const isConnected = isApiConnected && isSensorOnline;
 
   const formatTime = (timestamp: string) => {
-    return new Date(timestamp).toLocaleTimeString("en-US", {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString("en-US", {
       hour12: false,
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
     });
+  };
+
+  // Format time for chart display - shows seconds ago for recent data
+  const formatChartTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const secondsAgo = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (secondsAgo < 60) {
+      return `${secondsAgo}s ago`;
+    } else if (secondsAgo < 3600) {
+      const minutesAgo = Math.floor(secondsAgo / 60);
+      return `${minutesAgo}m ago`;
+    } else {
+      return formatTime(timestamp);
+    }
   };
 
   // Create enhanced sensor data that shows offline behavior correctly
@@ -113,27 +130,43 @@ const WorkspaceAnalytics = () => {
 
       return [...filteredHistoricalData, ...zeroEntries];
     }
-    return sensorData;
+
+    // For online sensors, limit to the most recent data points
+    // Sort by timestamp and take the last 50 points for better real-time performance
+    const sortedData = [...sensorData].sort(
+      (a, b) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+    );
+
+    // Take the most recent points (adjust this number based on your needs)
+    const recentPointsCount = Math.min(50, sortedData.length);
+    return sortedData.slice(-recentPointsCount);
   };
 
   const enhancedSensorData = getEnhancedSensorData();
 
-  const currentData = enhancedSensorData.map((item) => ({
-    time: formatTime(item.timestamp),
+  const currentData = enhancedSensorData.map((item, index) => ({
+    time: formatChartTime(item.timestamp),
+    fullTime: formatTime(item.timestamp),
     value: item.current,
+    timestamp: item.timestamp,
   }));
 
-  const vibrationData = enhancedSensorData.map((item) => ({
-    time: formatTime(item.timestamp),
+  const vibrationData = enhancedSensorData.map((item, index) => ({
+    time: formatChartTime(item.timestamp),
+    fullTime: formatTime(item.timestamp),
     x: item.vibrationX,
     y: item.vibrationY,
     z: item.vibrationZ,
+    timestamp: item.timestamp,
   }));
 
-  const temperatureData = enhancedSensorData.map((item) => ({
-    time: formatTime(item.timestamp),
+  const temperatureData = enhancedSensorData.map((item, index) => ({
+    time: formatChartTime(item.timestamp),
+    fullTime: formatTime(item.timestamp),
     sensorA: item.temperatureA,
     sensorB: item.temperatureB,
+    timestamp: item.timestamp,
   }));
 
   const latestData = enhancedSensorData[enhancedSensorData.length - 1];
@@ -311,9 +344,22 @@ const WorkspaceAnalytics = () => {
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
+                  interval="preserveStartEnd"
+                  minTickGap={30}
                 />
                 <YAxis fontSize={12} tickLine={false} axisLine={false} />
-                <ChartTooltip content={<ChartTooltipContent />} />
+                <ChartTooltip
+                  content={
+                    <ChartTooltipContent
+                      labelFormatter={(value, payload) => {
+                        if (payload && payload[0]) {
+                          return `Time: ${payload[0].payload.fullTime}`;
+                        }
+                        return value;
+                      }}
+                    />
+                  }
+                />
                 <Line
                   type="monotone"
                   dataKey="value"
@@ -321,6 +367,7 @@ const WorkspaceAnalytics = () => {
                   strokeWidth={2}
                   dot={false}
                   name="Current (A)"
+                  isAnimationActive={false}
                 />
               </LineChart>
             </ChartContainer>
@@ -363,9 +410,22 @@ const WorkspaceAnalytics = () => {
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
+                  interval="preserveStartEnd"
+                  minTickGap={30}
                 />
                 <YAxis fontSize={12} tickLine={false} axisLine={false} />
-                <ChartTooltip content={<ChartTooltipContent />} />
+                <ChartTooltip
+                  content={
+                    <ChartTooltipContent
+                      labelFormatter={(value, payload) => {
+                        if (payload && payload[0]) {
+                          return `Time: ${payload[0].payload.fullTime}`;
+                        }
+                        return value;
+                      }}
+                    />
+                  }
+                />
                 <Line
                   type="monotone"
                   dataKey="x"
@@ -373,6 +433,7 @@ const WorkspaceAnalytics = () => {
                   strokeWidth={2}
                   dot={false}
                   name="X-axis (g)"
+                  isAnimationActive={false}
                 />
                 <Line
                   type="monotone"
@@ -381,6 +442,7 @@ const WorkspaceAnalytics = () => {
                   strokeWidth={2}
                   dot={false}
                   name="Y-axis (g)"
+                  isAnimationActive={false}
                 />
                 <Line
                   type="monotone"
@@ -389,6 +451,7 @@ const WorkspaceAnalytics = () => {
                   strokeWidth={2}
                   dot={false}
                   name="Z-axis (g)"
+                  isAnimationActive={false}
                 />
               </LineChart>
             </ChartContainer>
@@ -427,9 +490,22 @@ const WorkspaceAnalytics = () => {
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
+                  interval="preserveStartEnd"
+                  minTickGap={30}
                 />
                 <YAxis fontSize={12} tickLine={false} axisLine={false} />
-                <ChartTooltip content={<ChartTooltipContent />} />
+                <ChartTooltip
+                  content={
+                    <ChartTooltipContent
+                      labelFormatter={(value, payload) => {
+                        if (payload && payload[0]) {
+                          return `Time: ${payload[0].payload.fullTime}`;
+                        }
+                        return value;
+                      }}
+                    />
+                  }
+                />
                 <Line
                   type="monotone"
                   dataKey="sensorA"
@@ -437,6 +513,7 @@ const WorkspaceAnalytics = () => {
                   strokeWidth={2}
                   dot={false}
                   name="Temperature A (°C)"
+                  isAnimationActive={false}
                 />
                 <Line
                   type="monotone"
@@ -445,6 +522,7 @@ const WorkspaceAnalytics = () => {
                   strokeWidth={2}
                   dot={false}
                   name="Temperature B (°C)"
+                  isAnimationActive={false}
                 />
               </LineChart>
             </ChartContainer>
