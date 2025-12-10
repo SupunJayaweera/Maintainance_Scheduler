@@ -16,9 +16,12 @@ export interface Notification {
 
 // Threshold configurations
 const THRESHOLDS = {
-  MAX_CURRENT: 20, // Amperes
-  MAX_VIBRATION: 1.5, // g-force
-  MAX_TEMPERATURE: 60, // Celsius
+  CURRENT: { max: 3.5 }, // Amperes
+  TEMP_A: { max: 45.0 }, // Celsius
+  TEMP_B: { max: 45.0 }, // Celsius
+  ACC_X: { min: -5.0, max: 0.7 }, // g-force
+  ACC_Y: { min: -7.0, max: 0.7 }, // g-force
+  ACC_Z: { min: 7.0, max: 12.5 }, // g-force
 };
 
 export const useNotifications = (
@@ -82,59 +85,94 @@ export const useNotifications = (
     const newNotifications: Notification[] = [];
 
     // Check current threshold
-    if (latestSensorData.current > THRESHOLDS.MAX_CURRENT) {
+    if (latestSensorData.current > THRESHOLDS.CURRENT.max) {
       newNotifications.push(
         createNotification(
           "critical",
           "current",
-          `Current exceeded safe limit: ${latestSensorData.current.toFixed(2)}A`,
+          `Current exceeded safe limit: ${latestSensorData.current.toFixed(2)}A (max: ${THRESHOLDS.CURRENT.max}A)`,
           latestSensorData.current,
-          THRESHOLDS.MAX_CURRENT
+          THRESHOLDS.CURRENT.max
         )
       );
     }
 
-    // Check vibration threshold (calculate magnitude)
-    const vibrationMagnitude = Math.sqrt(
-      latestSensorData.vibrationX ** 2 +
-        latestSensorData.vibrationY ** 2 +
-        latestSensorData.vibrationZ ** 2
-    );
-
-    if (vibrationMagnitude > THRESHOLDS.MAX_VIBRATION) {
+    // Check vibration X-axis threshold
+    if (
+      latestSensorData.vibrationX < THRESHOLDS.ACC_X.min ||
+      latestSensorData.vibrationX > THRESHOLDS.ACC_X.max
+    ) {
       newNotifications.push(
         createNotification(
-          "critical",
+          "warning",
           "vibration",
-          `Vibration exceeded safe limit: ${vibrationMagnitude.toFixed(2)}g`,
-          vibrationMagnitude,
-          THRESHOLDS.MAX_VIBRATION
+          `Vibration X-axis out of range: ${latestSensorData.vibrationX.toFixed(2)}g (range: ${THRESHOLDS.ACC_X.min}g to ${THRESHOLDS.ACC_X.max}g)`,
+          latestSensorData.vibrationX,
+          latestSensorData.vibrationX < THRESHOLDS.ACC_X.min
+            ? THRESHOLDS.ACC_X.min
+            : THRESHOLDS.ACC_X.max
+        )
+      );
+    }
+
+    // Check vibration Y-axis threshold
+    if (
+      latestSensorData.vibrationY < THRESHOLDS.ACC_Y.min ||
+      latestSensorData.vibrationY > THRESHOLDS.ACC_Y.max
+    ) {
+      newNotifications.push(
+        createNotification(
+          "warning",
+          "vibration",
+          `Vibration Y-axis out of range: ${latestSensorData.vibrationY.toFixed(2)}g (range: ${THRESHOLDS.ACC_Y.min}g to ${THRESHOLDS.ACC_Y.max}g)`,
+          latestSensorData.vibrationY,
+          latestSensorData.vibrationY < THRESHOLDS.ACC_Y.min
+            ? THRESHOLDS.ACC_Y.min
+            : THRESHOLDS.ACC_Y.max
+        )
+      );
+    }
+
+    // Check vibration Z-axis threshold
+    if (
+      latestSensorData.vibrationZ < THRESHOLDS.ACC_Z.min ||
+      latestSensorData.vibrationZ > THRESHOLDS.ACC_Z.max
+    ) {
+      newNotifications.push(
+        createNotification(
+          "warning",
+          "vibration",
+          `Vibration Z-axis out of range: ${latestSensorData.vibrationZ.toFixed(2)}g (range: ${THRESHOLDS.ACC_Z.min}g to ${THRESHOLDS.ACC_Z.max}g)`,
+          latestSensorData.vibrationZ,
+          latestSensorData.vibrationZ < THRESHOLDS.ACC_Z.min
+            ? THRESHOLDS.ACC_Z.min
+            : THRESHOLDS.ACC_Z.max
         )
       );
     }
 
     // Check temperature A threshold
-    if (latestSensorData.temperatureA > THRESHOLDS.MAX_TEMPERATURE) {
+    if (latestSensorData.temperatureA > THRESHOLDS.TEMP_A.max) {
       newNotifications.push(
         createNotification(
           "warning",
           "temperature",
-          `Temperature A exceeded safe limit: ${latestSensorData.temperatureA.toFixed(1)}°C`,
+          `Temperature A exceeded safe limit: ${latestSensorData.temperatureA.toFixed(1)}°C (max: ${THRESHOLDS.TEMP_A.max}°C)`,
           latestSensorData.temperatureA,
-          THRESHOLDS.MAX_TEMPERATURE
+          THRESHOLDS.TEMP_A.max
         )
       );
     }
 
     // Check temperature B threshold
-    if (latestSensorData.temperatureB > THRESHOLDS.MAX_TEMPERATURE) {
+    if (latestSensorData.temperatureB > THRESHOLDS.TEMP_B.max) {
       newNotifications.push(
         createNotification(
           "warning",
           "temperature",
-          `Temperature B exceeded safe limit: ${latestSensorData.temperatureB.toFixed(1)}°C`,
+          `Temperature B exceeded safe limit: ${latestSensorData.temperatureB.toFixed(1)}°C (max: ${THRESHOLDS.TEMP_B.max}°C)`,
           latestSensorData.temperatureB,
-          THRESHOLDS.MAX_TEMPERATURE
+          THRESHOLDS.TEMP_B.max
         )
       );
     }
@@ -142,12 +180,18 @@ export const useNotifications = (
     // Only add notifications if they don't already exist (prevent duplicates)
     if (newNotifications.length > 0) {
       setNotifications((prev) => {
-        const existingTypes = prev
-          .filter((n) => n.workspaceId === workspaceId)
-          .map((n) => `${n.category}-${n.workspaceId}`);
+        const existingKeys = prev
+          .filter((n) => n.workspaceId === workspaceId && !n.isRead)
+          .map(
+            (n) =>
+              `${n.category}-${n.message.substring(0, 30)}-${n.workspaceId}`
+          );
 
         const uniqueNew = newNotifications.filter(
-          (n) => !existingTypes.includes(`${n.category}-${n.workspaceId}`)
+          (n) =>
+            !existingKeys.includes(
+              `${n.category}-${n.message.substring(0, 30)}-${n.workspaceId}`
+            )
         );
 
         return [...prev, ...uniqueNew];

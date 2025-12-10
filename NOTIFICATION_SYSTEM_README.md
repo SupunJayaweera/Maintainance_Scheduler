@@ -14,15 +14,18 @@ The Industrial Sensor Notification System provides real-time alerts when sensor 
 
 ### 🚨 Safety Thresholds
 
-- **Current Sensor**: > 20 Amperes (Critical)
-- **Vibration Sensor**: > 1.5g magnitude (Warning)
-- **Temperature Sensors**: > 60°C (Warning for both A & B sensors)
+- **Current Sensor**: > 3.5 Amperes (Critical)
+- **Vibration X-axis**: < -5.0g or > 0.7g (Warning)
+- **Vibration Y-axis**: < -7.0g or > 0.7g (Warning)
+- **Vibration Z-axis**: < 7.0g or > 12.5g (Warning)
+- **Temperature Sensor A**: > 45.0°C (Warning)
+- **Temperature Sensor B**: > 45.0°C (Warning)
 - **Offline Detection**: Sensors offline for more than 1 minute (Warning)
 
 ### 📊 Notification Categories
 
-- **Critical**: High current (>20A) - Red indicators
-- **Warning**: High vibration (>1.5g), temperature (>60°C), offline sensors - Yellow indicators
+- **Critical**: High current (>3.5A) - Red indicators
+- **Warning**: Vibration out of range, temperature (>45°C), offline sensors - Yellow indicators
 - **Info**: General system notifications - Blue indicators
 
 ## Implementation Details
@@ -66,24 +69,29 @@ The Industrial Sensor Notification System provides real-time alerts when sensor 
 #### Current Monitoring
 
 ```javascript
-if (latestSensorData.current > 20) {
+if (latestSensorData.current > 3.5) {
   // Generate critical notification
-  // Current readings above 20A indicate potential overload
+  // Current readings above 3.5A indicate potential overload
 }
 ```
 
 #### Vibration Analysis (ADXL345 Accelerometer)
 
 ```javascript
-const vibrationMagnitude = Math.sqrt(
-  Math.pow(latestSensorData.vibrationX, 2) +
-    Math.pow(latestSensorData.vibrationY, 2) +
-    Math.pow(latestSensorData.vibrationZ, 2)
-);
+// Individual axis monitoring with min/max ranges
+if (latestSensorData.vibrationX < -5.0 || latestSensorData.vibrationX > 0.7) {
+  // Generate warning notification for X-axis
+  // Out of range indicates abnormal vibration
+}
 
-if (vibrationMagnitude > 1.5) {
-  // Generate warning notification
-  // High vibration indicates mechanical issues
+if (latestSensorData.vibrationY < -7.0 || latestSensorData.vibrationY > 0.7) {
+  // Generate warning notification for Y-axis
+  // Out of range indicates abnormal vibration
+}
+
+if (latestSensorData.vibrationZ < 7.0 || latestSensorData.vibrationZ > 12.5) {
+  // Generate warning notification for Z-axis
+  // Out of range indicates abnormal vibration
 }
 ```
 
@@ -91,8 +99,13 @@ if (vibrationMagnitude > 1.5) {
 
 ```javascript
 // Dual sensor monitoring
-if (latestSensorData.temperatureA > 60 || latestSensorData.temperatureB > 60) {
-  // Generate warning notifications
+if (latestSensorData.temperatureA > 45.0) {
+  // Generate warning notification for sensor A
+  // High temperature indicates overheating
+}
+
+if (latestSensorData.temperatureB > 45.0) {
+  // Generate warning notification for sensor B
   // High temperature indicates overheating
 }
 ```
