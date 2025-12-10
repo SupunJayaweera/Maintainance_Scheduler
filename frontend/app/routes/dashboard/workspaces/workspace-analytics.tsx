@@ -1,4 +1,5 @@
 import { useParams, useNavigate, Link } from "react-router";
+import { useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -68,20 +69,15 @@ const WorkspaceAnalytics = () => {
     });
   };
 
-  // Format time for chart display - shows seconds ago for recent data
-  const formatChartTime = (timestamp: string) => {
+  // Format timestamp for X-axis - simplified to show just time
+  const formatXAxisTime = (timestamp: string) => {
     const date = new Date(timestamp);
-    const now = new Date();
-    const secondsAgo = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-    if (secondsAgo < 60) {
-      return `${secondsAgo}s ago`;
-    } else if (secondsAgo < 3600) {
-      const minutesAgo = Math.floor(secondsAgo / 60);
-      return `${minutesAgo}m ago`;
-    } else {
-      return formatTime(timestamp);
-    }
+    return date.toLocaleTimeString("en-US", {
+      hour12: false,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
   };
 
   // Create enhanced sensor data that shows offline behavior correctly
@@ -145,29 +141,36 @@ const WorkspaceAnalytics = () => {
 
   const enhancedSensorData = getEnhancedSensorData();
 
-  const currentData = enhancedSensorData.map((item, index) => ({
-    time: formatChartTime(item.timestamp),
-    fullTime: formatTime(item.timestamp),
-    value: item.current,
-    timestamp: item.timestamp,
-  }));
+  // Use useMemo to prepare chart data - but keep timestamps raw for dynamic formatting
+  const currentData = useMemo(
+    () =>
+      enhancedSensorData.map((item) => ({
+        timestamp: item.timestamp,
+        value: item.current,
+      })),
+    [enhancedSensorData]
+  );
 
-  const vibrationData = enhancedSensorData.map((item, index) => ({
-    time: formatChartTime(item.timestamp),
-    fullTime: formatTime(item.timestamp),
-    x: item.vibrationX,
-    y: item.vibrationY,
-    z: item.vibrationZ,
-    timestamp: item.timestamp,
-  }));
+  const vibrationData = useMemo(
+    () =>
+      enhancedSensorData.map((item) => ({
+        timestamp: item.timestamp,
+        x: item.vibrationX,
+        y: item.vibrationY,
+        z: item.vibrationZ,
+      })),
+    [enhancedSensorData]
+  );
 
-  const temperatureData = enhancedSensorData.map((item, index) => ({
-    time: formatChartTime(item.timestamp),
-    fullTime: formatTime(item.timestamp),
-    sensorA: item.temperatureA,
-    sensorB: item.temperatureB,
-    timestamp: item.timestamp,
-  }));
+  const temperatureData = useMemo(
+    () =>
+      enhancedSensorData.map((item) => ({
+        timestamp: item.timestamp,
+        sensorA: item.temperatureA,
+        sensorB: item.temperatureB,
+      })),
+    [enhancedSensorData]
+  );
 
   const latestData = enhancedSensorData[enhancedSensorData.length - 1];
 
@@ -340,23 +343,19 @@ const WorkspaceAnalytics = () => {
               <LineChart data={currentData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
-                  dataKey="time"
+                  dataKey="timestamp"
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
                   interval="preserveStartEnd"
-                  minTickGap={30}
+                  minTickGap={50}
+                  tickFormatter={(value) => formatXAxisTime(value)}
                 />
                 <YAxis fontSize={12} tickLine={false} axisLine={false} />
                 <ChartTooltip
                   content={
                     <ChartTooltipContent
-                      labelFormatter={(value, payload) => {
-                        if (payload && payload[0]) {
-                          return `Time: ${payload[0].payload.fullTime}`;
-                        }
-                        return value;
-                      }}
+                      labelFormatter={(value) => `Time: ${formatTime(value)}`}
                     />
                   }
                 />
@@ -406,23 +405,19 @@ const WorkspaceAnalytics = () => {
               <LineChart data={vibrationData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
-                  dataKey="time"
+                  dataKey="timestamp"
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
                   interval="preserveStartEnd"
-                  minTickGap={30}
+                  minTickGap={50}
+                  tickFormatter={(value) => formatXAxisTime(value)}
                 />
                 <YAxis fontSize={12} tickLine={false} axisLine={false} />
                 <ChartTooltip
                   content={
                     <ChartTooltipContent
-                      labelFormatter={(value, payload) => {
-                        if (payload && payload[0]) {
-                          return `Time: ${payload[0].payload.fullTime}`;
-                        }
-                        return value;
-                      }}
+                      labelFormatter={(value) => `Time: ${formatTime(value)}`}
                     />
                   }
                 />
@@ -486,23 +481,19 @@ const WorkspaceAnalytics = () => {
               <LineChart data={temperatureData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
-                  dataKey="time"
+                  dataKey="timestamp"
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
                   interval="preserveStartEnd"
-                  minTickGap={30}
+                  minTickGap={50}
+                  tickFormatter={(value) => formatXAxisTime(value)}
                 />
                 <YAxis fontSize={12} tickLine={false} axisLine={false} />
                 <ChartTooltip
                   content={
                     <ChartTooltipContent
-                      labelFormatter={(value, payload) => {
-                        if (payload && payload[0]) {
-                          return `Time: ${payload[0].payload.fullTime}`;
-                        }
-                        return value;
-                      }}
+                      labelFormatter={(value) => `Time: ${formatTime(value)}`}
                     />
                   }
                 />
