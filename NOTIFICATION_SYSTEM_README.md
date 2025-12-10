@@ -15,9 +15,7 @@ The Industrial Sensor Notification System provides real-time alerts when sensor 
 ### 🚨 Safety Thresholds
 
 - **Current Sensor**: > 3.5 Amperes (Critical)
-- **Vibration X-axis**: < -5.0g or > 0.7g (Warning)
-- **Vibration Y-axis**: < -7.0g or > 0.7g (Warning)
-- **Vibration Z-axis**: < 7.0g or > 12.5g (Warning)
+- **Vibration Magnitude**: > 12.0g (Warning) - Resultant of X, Y, Z axes
 - **Temperature Sensor A**: > 45.0°C (Warning)
 - **Temperature Sensor B**: > 45.0°C (Warning)
 - **Offline Detection**: Sensors offline for more than 1 minute (Warning)
@@ -25,7 +23,7 @@ The Industrial Sensor Notification System provides real-time alerts when sensor 
 ### 📊 Notification Categories
 
 - **Critical**: High current (>3.5A) - Red indicators
-- **Warning**: Vibration out of range, temperature (>45°C), offline sensors - Yellow indicators
+- **Warning**: High vibration magnitude (>12g), temperature (>45°C), offline sensors - Yellow indicators
 - **Info**: General system notifications - Blue indicators
 
 ## Implementation Details
@@ -78,20 +76,16 @@ if (latestSensorData.current > 3.5) {
 #### Vibration Analysis (ADXL345 Accelerometer)
 
 ```javascript
-// Individual axis monitoring with min/max ranges
-if (latestSensorData.vibrationX < -5.0 || latestSensorData.vibrationX > 0.7) {
-  // Generate warning notification for X-axis
-  // Out of range indicates abnormal vibration
-}
+// Calculate resultant magnitude from 3 axes
+const vibrationMagnitude = Math.sqrt(
+  latestSensorData.vibrationX ** 2 +
+    latestSensorData.vibrationY ** 2 +
+    latestSensorData.vibrationZ ** 2
+);
 
-if (latestSensorData.vibrationY < -7.0 || latestSensorData.vibrationY > 0.7) {
-  // Generate warning notification for Y-axis
-  // Out of range indicates abnormal vibration
-}
-
-if (latestSensorData.vibrationZ < 7.0 || latestSensorData.vibrationZ > 12.5) {
-  // Generate warning notification for Z-axis
-  // Out of range indicates abnormal vibration
+if (vibrationMagnitude > 12.0) {
+  // Generate warning notification
+  // High vibration magnitude indicates mechanical issues
 }
 ```
 

@@ -19,9 +19,7 @@ const THRESHOLDS = {
   CURRENT: { max: 3.5 }, // Amperes
   TEMP_A: { max: 45.0 }, // Celsius
   TEMP_B: { max: 45.0 }, // Celsius
-  ACC_X: { min: -5.0, max: 0.7 }, // g-force
-  ACC_Y: { min: -7.0, max: 0.7 }, // g-force
-  ACC_Z: { min: 7.0, max: 12.5 }, // g-force
+  VIBRATION_MAGNITUDE: { max: 12.0 }, // g-force (resultant of 3 axes)
 };
 
 export const useNotifications = (
@@ -97,56 +95,21 @@ export const useNotifications = (
       );
     }
 
-    // Check vibration X-axis threshold
-    if (
-      latestSensorData.vibrationX < THRESHOLDS.ACC_X.min ||
-      latestSensorData.vibrationX > THRESHOLDS.ACC_X.max
-    ) {
-      newNotifications.push(
-        createNotification(
-          "warning",
-          "vibration",
-          `Vibration X-axis out of range: ${latestSensorData.vibrationX.toFixed(2)}g (range: ${THRESHOLDS.ACC_X.min}g to ${THRESHOLDS.ACC_X.max}g)`,
-          latestSensorData.vibrationX,
-          latestSensorData.vibrationX < THRESHOLDS.ACC_X.min
-            ? THRESHOLDS.ACC_X.min
-            : THRESHOLDS.ACC_X.max
-        )
-      );
-    }
+    // Check vibration magnitude (resultant of 3 axes)
+    const vibrationMagnitude = Math.sqrt(
+      latestSensorData.vibrationX ** 2 +
+        latestSensorData.vibrationY ** 2 +
+        latestSensorData.vibrationZ ** 2
+    );
 
-    // Check vibration Y-axis threshold
-    if (
-      latestSensorData.vibrationY < THRESHOLDS.ACC_Y.min ||
-      latestSensorData.vibrationY > THRESHOLDS.ACC_Y.max
-    ) {
+    if (vibrationMagnitude > THRESHOLDS.VIBRATION_MAGNITUDE.max) {
       newNotifications.push(
         createNotification(
           "warning",
           "vibration",
-          `Vibration Y-axis out of range: ${latestSensorData.vibrationY.toFixed(2)}g (range: ${THRESHOLDS.ACC_Y.min}g to ${THRESHOLDS.ACC_Y.max}g)`,
-          latestSensorData.vibrationY,
-          latestSensorData.vibrationY < THRESHOLDS.ACC_Y.min
-            ? THRESHOLDS.ACC_Y.min
-            : THRESHOLDS.ACC_Y.max
-        )
-      );
-    }
-
-    // Check vibration Z-axis threshold
-    if (
-      latestSensorData.vibrationZ < THRESHOLDS.ACC_Z.min ||
-      latestSensorData.vibrationZ > THRESHOLDS.ACC_Z.max
-    ) {
-      newNotifications.push(
-        createNotification(
-          "warning",
-          "vibration",
-          `Vibration Z-axis out of range: ${latestSensorData.vibrationZ.toFixed(2)}g (range: ${THRESHOLDS.ACC_Z.min}g to ${THRESHOLDS.ACC_Z.max}g)`,
-          latestSensorData.vibrationZ,
-          latestSensorData.vibrationZ < THRESHOLDS.ACC_Z.min
-            ? THRESHOLDS.ACC_Z.min
-            : THRESHOLDS.ACC_Z.max
+          `Vibration magnitude exceeded safe limit: ${vibrationMagnitude.toFixed(2)}g (max: ${THRESHOLDS.VIBRATION_MAGNITUDE.max}g)`,
+          vibrationMagnitude,
+          THRESHOLDS.VIBRATION_MAGNITUDE.max
         )
       );
     }
