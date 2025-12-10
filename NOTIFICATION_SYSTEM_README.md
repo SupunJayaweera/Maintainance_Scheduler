@@ -10,7 +10,7 @@ The Industrial Sensor Notification System provides real-time alerts when sensor 
 
 - **Bell Icon**: Located in the analytics dashboard header
 - **Badge Counter**: Shows unread notification count
-- **Auto-refresh**: Monitors sensor data every second for threshold violations
+- **Auto-refresh**: Monitors sensor data every 10 seconds for threshold violations
 
 ### 🚨 Safety Thresholds
 

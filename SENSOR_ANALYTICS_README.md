@@ -51,7 +51,7 @@ node sensor-data-generator.js
 This will:
 
 - Generate 30 minutes of historical sensor data
-- Start real-time data generation every 2 seconds
+- Start real-time data generation every 10 seconds
 - Monitor multiple workspace IDs with realistic sensor patterns
 
 ### 5. Test the Analytics API

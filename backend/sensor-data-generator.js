@@ -156,16 +156,16 @@ async function startDataGenerator() {
     // Generate historical data first
     await generateHistoricalData();
 
-    // Start real-time data generation every 2 seconds
+    // Start real-time data generation every 10 seconds
     setInterval(() => {
       try {
         writeSensorData();
       } catch (error) {
         console.error("Error in data generation cycle:", error);
       }
-    }, 2000);
+    }, 10000); // Changed from 2000 to 10000 (10 seconds)
 
-    console.log("Real-time sensor data generation started (every 2 seconds)");
+    console.log("Real-time sensor data generation started (every 10 seconds)");
   } catch (error) {
     console.error("Failed to start data generator:", error);
     process.exit(1);

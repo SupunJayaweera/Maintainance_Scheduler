@@ -25,8 +25,8 @@ export const useSensorDataQuery = (
         `/sensors/${workspaceId}/data?timeRange=${timeRange}`
       );
     },
-    refetchInterval: 2000, // Refetch every 2 seconds for real-time updates
-    staleTime: 1000, // Consider data stale after 1 second
+    refetchInterval: 10000, // Refetch every 10 seconds to match data generation
+    staleTime: 5000, // Consider data stale after 5 seconds
   });
 };
 
@@ -36,7 +36,7 @@ export const useLatestSensorDataQuery = (workspaceId: string) => {
     queryFn: async (): Promise<SensorData | null> => {
       return fetchData<SensorData | null>(`/sensors/${workspaceId}/latest`);
     },
-    refetchInterval: 1000, // Refetch every 1 second for latest data
-    staleTime: 500, // Consider data stale after 0.5 seconds
+    refetchInterval: 10000, // Refetch every 10 seconds for latest data
+    staleTime: 5000, // Consider data stale after 5 seconds
   });
 };
