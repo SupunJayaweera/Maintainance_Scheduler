@@ -25,8 +25,11 @@ export const useSensorDataQuery = (
         `/sensors/${workspaceId}/data?timeRange=${timeRange}`
       );
     },
-    refetchInterval: 10000, // Refetch every 10 seconds to match data generation
-    staleTime: 5000, // Consider data stale after 5 seconds
+    refetchInterval: 3000, // Refetch every 3 seconds for near real-time updates
+    staleTime: 0, // Always consider data stale, fetch fresh data
+    refetchOnWindowFocus: true, // Refetch when user returns to tab
+    refetchOnReconnect: true, // Refetch when internet reconnects
+    cacheTime: 2000, // Keep cache for only 2 seconds
   });
 };
 
@@ -36,7 +39,10 @@ export const useLatestSensorDataQuery = (workspaceId: string) => {
     queryFn: async (): Promise<SensorData | null> => {
       return fetchData<SensorData | null>(`/sensors/${workspaceId}/latest`);
     },
-    refetchInterval: 10000, // Refetch every 10 seconds for latest data
-    staleTime: 5000, // Consider data stale after 5 seconds
+    refetchInterval: 3000, // Refetch every 3 seconds for latest data
+    staleTime: 0, // Always fetch fresh data
+    refetchOnWindowFocus: true, // Refetch when user returns to tab
+    refetchOnReconnect: true, // Refetch when internet reconnects
+    cacheTime: 2000, // Keep cache for only 2 seconds
   });
 };

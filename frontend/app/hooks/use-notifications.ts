@@ -1,6 +1,19 @@
 import { useState, useEffect } from "react";
 import { useLatestSensorDataQuery } from "./use-sensor-data";
 
+interface SensorData {
+  timestamp: string;
+  current: number;
+  vibrationX: number;
+  vibrationY: number;
+  vibrationZ: number;
+  temperatureA: number;
+  temperatureB: number;
+  status?: "online" | "offline";
+  message?: string;
+  lastSeen?: string;
+}
+
 export interface Notification {
   id: string;
   workspaceId: string;
@@ -30,7 +43,7 @@ export const useNotifications = (
 
   const { data: latestSensorData } = useLatestSensorDataQuery(
     workspaceId || ""
-  );
+  ) as { data: SensorData | null | undefined };
 
   // Generate notification ID
   const generateId = () => Math.random().toString(36).substr(2, 9);

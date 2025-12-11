@@ -29,6 +29,9 @@ interface SensorData {
   vibrationZ: number;
   temperatureA: number;
   temperatureB: number;
+  status?: "online" | "offline";
+  message?: string;
+  lastSeen?: string;
 }
 
 const WorkspaceAnalytics = () => {
@@ -43,16 +46,24 @@ const WorkspaceAnalytics = () => {
     data: latestSensorReading,
     isLoading: latestLoading,
     error: latestError,
-  } = useLatestSensorDataQuery(workspaceId);
+  } = useLatestSensorDataQuery(workspaceId) as {
+    data: SensorData | null | undefined;
+    isLoading: boolean;
+    error: Error | null;
+  };
 
-  // Dynamic time range based on sensor status
-  const timeRange = latestSensorReading?.status === "offline" ? "5m" : "5m";
+  // Dynamic time range - reduced to 2 minutes for faster queries
+  const timeRange = "2m";
 
   const {
     data: sensorData = [],
     isLoading,
     error,
-  } = useSensorDataQuery(workspaceId, timeRange);
+  } = useSensorDataQuery(workspaceId, timeRange) as {
+    data: SensorData[];
+    isLoading: boolean;
+    error: Error | null;
+  };
 
   // Connection status based on API and sensor status
   const isApiConnected = !error && !isLoading;

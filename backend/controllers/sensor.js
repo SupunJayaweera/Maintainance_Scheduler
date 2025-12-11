@@ -11,7 +11,7 @@ const queryApi = new InfluxDB({ url, token }).getQueryApi(org);
 const getSensorData = async (req, res) => {
   try {
     const { workspaceId } = req.params;
-    const { timeRange = "10m" } = req.query; // Default to last 10 minutes
+    const { timeRange = "2m" } = req.query; // Reduced default to 2 minutes for faster queries
 
     const query = `
       from(bucket: "${bucket}")
@@ -20,6 +20,7 @@ const getSensorData = async (req, res) => {
         |> filter(fn: (r) => r["workspace_id"] == "${workspaceId}")
         |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
         |> sort(columns: ["_time"], desc: false)
+        |> tail(n: 100)
     `;
 
     const result = [];
